@@ -63,10 +63,10 @@ class Config:
         "Cache-Control": "no-store",
         "Content-Security-Policy": (
             "default-src 'self'; "
-            "script-src 'self' https://cdnjs.cloudflare.com; "
-            "style-src 'self' https://fonts.googleapis.com; "
-            "font-src 'self' https://fonts.gstatic.com; "
-            "img-src 'self' data:; "
+            "script-src 'self'; "
+            "style-src 'self'; "
+            "font-src 'self'; "
+            "img-src 'self'; "
             "connect-src 'self'; "
             "frame-ancestors 'none'; "
             "base-uri 'self'; "
