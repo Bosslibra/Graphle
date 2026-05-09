@@ -1,0 +1,26 @@
+{
+  "not-found-page": {
+    "title": "Pagina non trovata",
+    "description": "Impossibile trovare la risorsa richiesta",
+    "home-link": "Torna alla home"
+  },
+  "home-page": {
+    "game-title": "Graphle",
+    "game-subtitle": "Il puzzle giornaliero di teoria dei grafi",
+    "next-puzzle": "Prossimo puzzle tra",
+    "play-daily": "Gioca il puzzle di oggi",
+    "other-modes": "Altri modi",
+    "help-modal": {
+      "how-to-play": "Come si gioca",
+      "how-to-play-description": "Indovina il puzzle del grafo minimo nel minor numero di tentativi possibile.",
+      "mode-daily": "Giornaliero",
+      "mode-daily-desc": "un puzzle ufficiale al giorno, si azzera a mezzanotte.",
+      "mode-practice": "Pratica",
+      "mode-practice-desc": "puzzle illimitati, nessuna serie a rischio.",
+      "mode-timed": "A tempo",
+      "mode-timed-desc": "risolvi quanti più puzzle possibili prima che scada il tempo.",
+      "mode-custom": "Personalizzato",
+      "mode-custom-desc": "crea e condividi una sfida con un seed."
+    }
+  }
+}

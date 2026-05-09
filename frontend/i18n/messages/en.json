@@ -1,0 +1,26 @@
+{
+    "not-found-page": {
+        "title": "Page not found",
+        "description": "Could not find requested resource",
+        "home-link": "Go back home"
+    },
+    "home-page": {
+        "game-title": "Graphle",
+        "game-subtitle": "Daily graph theory puzzle",
+        "next-puzzle": "Next puzzle in",
+        "play-daily": "Play today's puzzle",
+        "other-modes": "Other modes",
+        "help-modal": {
+            "how-to-play": "How to play",
+            "how-to-play-description": "Guess the minimum graph puzzle in as few tries as possible.",
+            "mode-daily": "Daily",
+            "mode-daily-desc": "one official puzzle per day, resets at midnight.",
+            "mode-practice": "Practice",
+            "mode-practice-desc": "unlimited puzzles, no streak at stake.",
+            "mode-timed": "Timed",
+            "mode-timed-desc": "solve as many as possible before time runs out.",
+            "mode-custom": "Custom",
+            "mode-custom-desc": "create and share a seeded challenge."
+        }
+    }
+}
