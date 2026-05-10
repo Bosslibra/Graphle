@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { HelpCircle } from "lucide-react";
+import { Dumbbell, HelpCircle, Hourglass, ClockFading, Swords } from "lucide-react";
 
 export default function HelpModal() {
   const t = useTranslations("home-page.help-modal");
@@ -27,23 +27,23 @@ export default function HelpModal() {
           <DialogTitle>{t("how-to-play")}</DialogTitle>
           <DialogDescription>{t("how-to-play-description")}</DialogDescription>
         </DialogHeader>
-        <div className="space-y-2 text-sm text-muted-foreground">
-          <p>
-            <span className="font-medium text-foreground">{t("mode-daily")}</span>
-            {" — "}{t("mode-daily-desc")}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">{t("mode-practice")}</span>
-            {" — "}{t("mode-practice-desc")}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">{t("mode-timed")}</span>
-            {" — "}{t("mode-timed-desc")}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">{t("mode-custom")}</span>
-            {" — "}{t("mode-custom-desc")}
-          </p>
+        <div className="space-y-4 text-sm text-muted-foreground">
+          <div className="flex flex-col gap-1">
+            <span className="font-medium text-foreground"><Hourglass className="h-4 w-4 inline-block mr-1" />{t("mode-daily")}</span>
+            <p>{t("mode-daily-desc")}</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="font-medium text-foreground"><Dumbbell className="h-4 w-4 inline-block mr-1" />{t("mode-practice")}</span>
+            <p>{t("mode-practice-desc")}</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="font-medium text-foreground"><ClockFading className="h-4 w-4 inline-block mr-1" />{t("mode-timed")}</span>
+            <p>{t("mode-timed-desc")}</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="font-medium text-foreground"><Swords className="h-4 w-4 inline-block mr-1" />{t("mode-challenge")}</span>
+            <p>{t("mode-challenge-desc")}</p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
