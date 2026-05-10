@@ -35,18 +35,9 @@ export default function HomePage({
   const t = useTranslations("home-page");
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4 pt-16 sm:pt-4 text-foreground">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-transparent px-4 pt-16 sm:pt-4 text-foreground">
 
-      {/* Subtle grid texture */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-
+      
       {/* Help — fixed so it stays visible on scroll */}
       <div className="fixed right-4 top-4 sm:right-6 sm:top-6 z-40">
         <HelpModal />
@@ -54,9 +45,7 @@ export default function HomePage({
 
       {/* Card */}
       <Card className="relative w-full max-w-sm backdrop-blur-sm lg:max-w-md mx-4 sm:mx-0">
-
         <CardHeader className="items-center text-center">
-          {/* Logo icon */}
           <div className="mb-2 flex h-12 w-12 sm:h-14 sm:w-14 m-auto items-center justify-center rounded-2xl border bg-background shadow-sm">
             <Network className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
           </div>
@@ -69,7 +58,6 @@ export default function HomePage({
         </CardHeader>
 
         <CardContent className="flex flex-col items-center gap-4 sm:gap-5">
-          {/* Countdown badge */}
           <Badge
             variant="outline"
             className="h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs text-muted-foreground"
@@ -78,12 +66,10 @@ export default function HomePage({
             {t("next-puzzle")} <CountdownTimer />
           </Badge>
 
-          {/* Primary CTA */}
           <Button asChild size="lg" className="h-12 w-full rounded-xl font-medium">
             <Link href="/play/daily">{t("play-daily")}</Link>
           </Button>
 
-          {/* Divider */}
           <div className="flex w-full items-center gap-3">
             <Separator className="flex-1" />
             <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -92,7 +78,6 @@ export default function HomePage({
             <Separator className="flex-1" />
           </div>
 
-          {/* Secondary modes */}
           <div className="w-full max-w-[180px] sm:max-w-[160px]">
             <div className="flex w-full flex-col gap-2 sm:gap-1.5">
               {SECONDARY_MODES.map(({ slug, icon: Icon }) => (
@@ -118,9 +103,7 @@ export default function HomePage({
         <CardFooter className="justify-center pb-2 pt-0">
           <p className="text-[12px] text-muted-foreground/60">{t("game-title")} &ndash; {new Date().getFullYear()}</p>
         </CardFooter>
-
       </Card>
     </div>
   );
-
 }
