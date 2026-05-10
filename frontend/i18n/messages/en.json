@@ -1,0 +1,46 @@
+{
+    "not-found-page": {
+        "title": "Page not found",
+        "description": "Could not find requested resource",
+        "home-link": "Go back home"
+    },
+    "theme-switch": {
+        "toggle-theme": "Toggle theme",
+        "light": "Switch to light",
+        "dark": "Switch to dark"
+    },
+    "locale-switch": {
+        "label": "Change language",
+        "en": "English",
+        "it": "Italian"
+    },
+    "controls-drawer": {
+        "open": "Open settings",
+        "title": "Settings",
+        "theme": "Theme",
+        "language": "Language"
+    },
+    "home-page": {
+        "game-title": "Graphle",
+        "game-subtitle": "Daily graph theory puzzle",
+        "next-puzzle": "Next puzzle in",
+        "play-daily": "Play today's puzzle",
+        "other-modes": "Other modes",
+        "modes-daily": "Daily",
+        "modes-practice": "Practice",
+        "modes-timed": "Timed",
+        "modes-challenge": "Challenge",
+        "help-modal": {
+            "how-to-play": "How to play",
+            "how-to-play-description": "Guess the graph puzzle in as few tries as possible.",
+            "mode-daily": "Daily",
+            "mode-daily-desc": "One official puzzle per day, resets at midnight.",
+            "mode-practice": "Practice",
+            "mode-practice-desc": "Hone your skills with unlimited puzzles.",
+            "mode-timed": "Timed",
+            "mode-timed-desc": "Solve as many as possible before time runs out.",
+            "mode-challenge": "Challenge",
+            "mode-challenge-desc": "Create and share a seeded challenge."
+        }
+    }
+}

@@ -8,8 +8,14 @@ on:
     branches:
       - main
 
+##########
+#  JOBS  #
+##########
+
+#There are Frontend and Backend tests
+
 jobs:
-  test:
+  test-backend:
     runs-on: ubuntu-latest
 
     strategy:
@@ -34,3 +40,32 @@ jobs:
       - name: Run tests
         working-directory: backend
         run: pytest
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ["22"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test

@@ -1,0 +1,47 @@
+{
+  "not-found-page": {
+    "title": "Pagina non trovata",
+    "description": "Impossibile trovare la risorsa richiesta",
+    "home-link": "Torna alla home"
+  },
+  "theme-switch": {
+    "toggle-theme": "Cambia il tema",
+    "light": "Cambia il tema in Chiaro",
+    "dark": "Cambia il tema in Scuro",
+    "system": "Cambia il tema in Sistema"
+  },
+  "locale-switch": {
+    "label": "Cambia lingua",
+    "en": "Inglese",
+    "it": "Italiano"
+  },
+  "controls-drawer": {
+    "open": "Apri impostazioni",
+    "title": "Impostazioni",
+    "theme": "Tema",
+    "language": "Lingua"
+  },
+  "home-page": {
+    "game-title": "Graphle",
+    "game-subtitle": "Il puzzle giornaliero di teoria dei grafi",
+    "next-puzzle": "Prossimo puzzle tra",
+    "play-daily": "Gioca il puzzle di oggi",
+    "other-modes": "Altre modalità",
+    "modes-daily": "Giornaliero",
+    "modes-practice": "Allenamento",
+    "modes-timed": "A tempo",
+    "modes-challenge": "Sfida",
+    "help-modal": {
+      "how-to-play": "Come si gioca",
+      "how-to-play-description": "Indovina il puzzle del grafo nel minor numero di tentativi possibile.",
+      "mode-daily": "Giornaliero",
+      "mode-daily-desc": "Un puzzle ufficiale al giorno, si azzera a mezzanotte.",
+      "mode-practice": "Allenamento",
+      "mode-practice-desc": "Affina le tue abilità con puzzle illimitati.",
+      "mode-timed": "A tempo",
+      "mode-timed-desc": "Risolvi quanti più puzzle possibili prima che scada il tempo.",
+      "mode-challenge": "Sfida",
+      "mode-challenge-desc": "Crea e condividi una sfida con un seed."
+    }
+  }
+}
