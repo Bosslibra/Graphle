@@ -1,27 +1,44 @@
 import random
+import string
+from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, request
 
-mst_bp = Blueprint("mst", __name__)
+app = Blueprint("mst", __name__)
 
 
 @app.route("/api/graph")
 def get_graph():
+    mode = request.args.get("mode")
     user_seed = request.args.get("seed")
 
-    # 2. If they didn't provide a seed, create a random one
-    # Note: If you want to force them to always have a seed in the URL,
-    # you would redirect them instead of doing this silently.
-    if not user_seed:
+    # 1. Check if the user is requesting the daily challenge
+    if mode == "daily":
+        user_seed = get_daily_seed()
+    # 2. If no seed provided and not daily mode, create a random one
+    elif not user_seed:
         user_seed = generate_random_seed()
 
     # 3. Generate the graph using the seed
     puzzle_data = generate_graph(n_nodes=6, min_w=1, max_w=15, seed=user_seed)
 
-    # 4. Attach the seed to the response so the frontend knows what it is!
+    # 4. Attach metadata to the response
     puzzle_data["seed"] = user_seed
+    puzzle_data["is_daily"] = mode == "daily" or user_seed == get_daily_seed()
 
     return jsonify(puzzle_data)
+
+
+def get_daily_seed():
+    """
+    Generates a consistent seed based on the current UTC date.
+    Using UTC ensures everyone in the world gets the new puzzle at the exact same time.
+    """
+    date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    # aggiungere un salt per rendere il seed piu sicuro
+    salt = "fdksdfjsfjlfjdofgsoo"
+    return f"{salt}-{date_str}"
 
 
 def generate_random_seed():
