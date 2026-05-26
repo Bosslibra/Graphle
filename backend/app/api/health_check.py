@@ -1,16 +1,18 @@
-from flask import Blueprint, jsonify
+from flask_openapi3 import APIBlueprint, Tag
+from flask import jsonify
 
-health_check_bp = Blueprint("health_check", __name__)
+health_tag = Tag(name="Health Check")
+health_check_bp = APIBlueprint("health_check", __name__, url_prefix="/api")
 
 
 # Health check route
-@health_check_bp.route("/health", methods=["GET"])
+@health_check_bp.get("/health", tags=[health_tag])
 def health():
     """
     Simple health check endpoint to verify that the server is running.
 
     Behaviour:
-        - Does not perform any deep check. As it is a simple check to verify that the server is running.
+        - Does not perform any deep check.
 
     Returns:
         200 OK with JSON containing a status message.

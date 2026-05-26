@@ -1,12 +1,21 @@
 import random
+import string
 
-from flask import Blueprint, jsonify, request
+from flask import jsonify, request
+from flask_openapi3 import APIBlueprint, Tag
 
-mst_bp = Blueprint("mst", __name__)
+mst_tag = Tag(name="Graph")
+mst_bp = APIBlueprint("mst", __name__, url_prefix="/api")
 
 
-@app.route("/api/graph")
+@mst_bp.get("/graph", tags=[mst_tag])
 def get_graph():
+    """
+    Generate a random MST graph with the given seed.
+    
+    Returns:
+        200 OK with JSON containing the graph nodes and edges.
+    """
     user_seed = request.args.get("seed")
 
     # 2. If they didn't provide a seed, create a random one
