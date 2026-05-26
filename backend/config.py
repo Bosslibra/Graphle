@@ -23,7 +23,7 @@ class Config:
     """Base configuration loaded from environment variables."""
 
     # General
-    ENVIRONMENT = environ.get("ENVIRONMENT", "production")
+    ENVIRONMENT = None  # Set by subclasses
 
     # Flask Core
     SECRET_KEY = environ.get("TRACK_SECRET_KEY")
@@ -37,7 +37,10 @@ class Config:
     # Session & Security
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Strict"
-    SESSION_COOKIE_SECURE = _is_truthy(environ.get("TRACK_COOKIE_SECURE"), True)
+    SESSION_COOKIE_SECURE = _is_truthy(
+            environ.get("TRACK_COOKIE_SECURE"),
+            True
+        )
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
 
     # Request limits
@@ -53,6 +56,9 @@ class Config:
         .get("anti_timing_attack", {})
         .get("dummy_hash")
     )
+
+    # OpenAPI Docs visiibility
+    ENABLE_SCALAR = False
 
     # Security Headers (custom block)
     SECURITY_HEADERS = {
@@ -73,3 +79,37 @@ class Config:
             "form-action 'self'"
         ),
     }
+
+
+class DevelopmentConfig(Config):
+    """Development configuration."""
+    ENVIRONMENT = "development"
+    FLASK_DEBUG = True
+    ENABLE_SCALAR = True
+
+
+class StagingConfig(Config):
+    """Staging configuration."""
+    ENVIRONMENT = "staging"
+    FLASK_DEBUG = True
+    ENABLE_SCALAR = True
+
+
+class ProductionConfig(Config):
+    """Production configuration."""
+    ENVIRONMENT = "production"
+    FLASK_DEBUG = False
+    ENABLE_SCALAR = False
+
+
+class Env:
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
+
+
+config_by_name = {
+    Env.DEVELOPMENT: DevelopmentConfig,
+    Env.STAGING: StagingConfig,
+    Env.PRODUCTION: ProductionConfig,
+}
