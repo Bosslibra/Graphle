@@ -47,7 +47,11 @@ class Config:
     MAX_CONTENT_LENGTH = 1024 * 1024  # 1MB
 
     # Authentication & Rate Limiting
-    _auth_config = _yaml_config.get("authentication", {}).get("rate_limiting", {})
+    _auth_config = (
+        _yaml_config
+        .get("authentication", {})
+        .get("rate_limiting", {})
+    )
     MAX_LOGIN_ATTEMPTS = _auth_config.get("max_attempts", 3)
     LOGIN_ATTEMPT_WINDOW_SECONDS = _auth_config.get("window_seconds", 600)
     LOGIN_LOCKOUT_SECONDS = _auth_config.get("lockout_seconds", 900)

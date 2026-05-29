@@ -9,8 +9,13 @@ def generate_random_seed() -> str:
     return "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 
-def generate_graph(n_nodes: int, min_w: int, max_w: int, seed: str) -> GraphResponse:
-    """Generate a random connected graph using Kruskal-style spanning tree plus extra edges."""
+def generate_graph(
+    n_nodes: int, min_w: int, max_w: int, seed: str
+) -> GraphResponse:
+    """
+    Generate a random connected graph using Kruskal-style
+    spanning tree plus extra edges.
+    """
     rng = random.Random(seed)
 
     labels = rng.sample("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n_nodes)
