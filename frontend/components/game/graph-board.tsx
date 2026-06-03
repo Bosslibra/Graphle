@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { Fragment, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Edge, GameStatus, GraphResponse } from "@/components/game/types";
@@ -103,6 +103,18 @@ export default function GraphBoard({
     return keys;
   }, [selected]);
 
+  const selectedEdgeDirection = useMemo(() => {
+    const direction = new Map<string, { from: string; to: string }>();
+
+    for (let i = 0; i < selected.length - 1; i++) {
+      const from = selected[i];
+      const to = selected[i + 1];
+      direction.set([from, to].sort().join("::"), { from, to });
+    }
+
+    return direction;
+  }, [selected]);
+
   const isEdgeInUserPath = useCallback(
     (edge: Edge) => selectedEdgeKeys.has([edge.source, edge.target].sort().join("::")),
     [selectedEdgeKeys],
@@ -139,18 +151,32 @@ export default function GraphBoard({
         >
           <defs>
             {graph.edges.map((edge) => (
-              <linearGradient
-                key={`grad-${edge.id}`}
-                id={`grad-${edge.id}`}
-                x1={positions[edge.source].x}
-                y1={positions[edge.source].y}
-                x2={positions[edge.target].x}
-                y2={positions[edge.target].y}
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor={getColor(nodeHues[edge.source])} />
-                <stop offset="100%" stopColor={getColor(nodeHues[edge.target])} />
-              </linearGradient>
+              <Fragment key={`grad-${edge.id}`}>
+                <linearGradient
+                  key={`grad-${edge.id}-forward`}
+                  id={`grad-${edge.id}-forward`}
+                  x1={positions[edge.source].x}
+                  y1={positions[edge.source].y}
+                  x2={positions[edge.target].x}
+                  y2={positions[edge.target].y}
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0%" stopColor={getColor(nodeHues[edge.source])} />
+                  <stop offset="100%" stopColor={getColor(nodeHues[edge.target])} />
+                </linearGradient>
+                <linearGradient
+                  key={`grad-${edge.id}-reverse`}
+                  id={`grad-${edge.id}-reverse`}
+                  x1={positions[edge.target].x}
+                  y1={positions[edge.target].y}
+                  x2={positions[edge.source].x}
+                  y2={positions[edge.source].y}
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0%" stopColor={getColor(nodeHues[edge.target])} />
+                  <stop offset="100%" stopColor={getColor(nodeHues[edge.source])} />
+                </linearGradient>
+              </Fragment>
             ))}
           </defs>
 
@@ -159,6 +185,19 @@ export default function GraphBoard({
             const t = positions[edge.target];
             const inUser = isEdgeInUserPath(edge);
             const inBest = showBestPath && isEdgeInBestPath(edge);
+            const traversedDirection = selectedEdgeDirection.get(
+              [edge.source, edge.target].sort().join("::"),
+            );
+
+            const lineStart =
+              inUser && traversedDirection ? positions[traversedDirection.from] : s;
+            const lineEnd = inUser && traversedDirection ? positions[traversedDirection.to] : t;
+            const gradientId =
+              inUser && traversedDirection
+                ? edge.source === traversedDirection.from
+                  ? `grad-${edge.id}-forward`
+                  : `grad-${edge.id}-reverse`
+                : `grad-${edge.id}-forward`;
 
             const mx = (s.x + t.x) / 2;
             const my = (s.y + t.y) / 2;
@@ -169,13 +208,13 @@ export default function GraphBoard({
               <g key={edge.id}>
                 <line
                   key={lineKey}
-                  x1={s.x}
-                  y1={s.y}
-                  x2={t.x}
-                  y2={t.y}
+                  x1={lineStart.x}
+                  y1={lineStart.y}
+                  x2={lineEnd.x}
+                  y2={lineEnd.y}
                   pathLength={1}
                   strokeWidth={inUser || inBest ? 4 : 1.5}
-                  stroke={inUser || inBest ? `url(#grad-${edge.id})` : "var(--border)"}
+                  stroke={inUser || inBest ? `url(#${gradientId})` : "var(--border)"}
                   className={cn(
                     "transition-all duration-200",
                     (inUser || inBest) && "animate-draw",
