@@ -42,5 +42,47 @@
             "mode-challenge": "Challenge",
             "mode-challenge-desc": "Create and share a seeded challenge."
         }
+    },
+    "game-session": {
+        "from": "From",
+        "cost": "Cost",
+        "seed": "Seed",
+        "result": {
+            "wonTitle": "Shortest path found!",
+            "lostTitle": "Not the shortest path",
+            "yourCost": "Your cost",
+            "best": "Best",
+            "optimal": "Optimal"
+        },
+        "controls": {
+            "back": "Back",
+            "submit": "Submit",
+            "undo": "Undo",
+            "reset": "Reset",
+            "newGame": "New game"
+        }
+    },
+    "play-modes": {
+        "daily": {
+            "puzzleNumber": "Daily puzzle #{puzzleNumber}",
+            "copyResult": "Copy result",
+            "shareStatus": {
+                "solved": "Solved",
+                "tried": "Tried"
+            },
+            "shareText": "Graphle Daily #{puzzleNumber} {result}\nCost {userCost} | Best {bestCost}"
+        },
+        "practice": {
+            "loading": "Loading new graph..."
+        },
+        "timed": {
+            "solved": "Solved",
+            "timeLeft": "Time left",
+            "loading": "Loading next graph..."
+        },
+        "challenge": {
+            "copySeed": "Copy challenge seed",
+            "copied": "Seed copied"
+        }
     }
 }

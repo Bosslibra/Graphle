@@ -43,5 +43,47 @@
       "mode-challenge": "Sfida",
       "mode-challenge-desc": "Crea e condividi una sfida con un seed."
     }
+  },
+  "game-session": {
+    "from": "Da",
+    "cost": "Costo",
+    "seed": "Seed",
+    "result": {
+      "wonTitle": "Percorso minimo trovato!",
+      "lostTitle": "Non e il percorso minimo",
+      "yourCost": "Il tuo costo",
+      "best": "Migliore",
+      "optimal": "Ottimale"
+    },
+    "controls": {
+      "back": "Indietro",
+      "submit": "Conferma",
+      "undo": "Annulla",
+      "reset": "Ricomincia",
+      "newGame": "Nuova partita"
+    }
+  },
+  "play-modes": {
+    "daily": {
+      "puzzleNumber": "Puzzle giornaliero #{puzzleNumber}",
+      "copyResult": "Copia risultato",
+      "shareStatus": {
+        "solved": "Risolto",
+        "tried": "Tentato"
+      },
+      "shareText": "Graphle Daily #{puzzleNumber} {result}\nCosto {userCost} | Migliore {bestCost}"
+    },
+    "practice": {
+      "loading": "Caricamento nuovo grafo..."
+    },
+    "timed": {
+      "solved": "Risolti",
+      "timeLeft": "Tempo rimasto",
+      "loading": "Caricamento prossimo grafo..."
+    },
+    "challenge": {
+      "copySeed": "Copia seme sfida",
+      "copied": "Seme copiato"
+    }
   }
 }
