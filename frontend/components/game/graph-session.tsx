@@ -8,8 +8,9 @@ import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, ChevronRight, RotateCcw, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import GraphBoard from "@/components/game/graph-board";
-import { Edge, GameStatus, GraphResponse } from "@/components/game/types";
+import { GameStatus, GraphResponse } from "@/components/game/types";
 import { dijkstra } from "@/components/game/helpers";
+import { GraphBoardThemeId } from "@/components/game/board-themes";
 
 
 
@@ -20,6 +21,7 @@ interface GraphSessionProps {
   onComplete?: (won: boolean, userCost: number, bestCost: number) => void;
   onRestart?: () => void;
   showSeed?: boolean;
+  boardThemeId?: GraphBoardThemeId;
 }
 
 export default function GraphSession({
@@ -29,6 +31,7 @@ export default function GraphSession({
   onComplete,
   onRestart,
   showSeed = true,
+  boardThemeId,
 }: GraphSessionProps) {
   const t = useTranslations("game-session");
   const src = sourceNode ?? graph.nodes[0].id;
@@ -148,6 +151,7 @@ export default function GraphSession({
         status={status}
         bestPath={bestPath}
         showBestPath={showBestPath}
+        themeId={boardThemeId}
         onNodeClick={handleNodeClick}
       />
 

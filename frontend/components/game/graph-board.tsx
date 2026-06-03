@@ -4,11 +4,13 @@ import { Fragment, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Edge, GameStatus, GraphResponse } from "@/components/game/types";
+import {
+  getGraphBoardTheme,
+  GraphBoardThemeId,
+} from "@/components/game/board-themes";
 
 const NODE_RADIUS = 22;
 const SVG_SIZE = 380;
-const HUE_START = 190;
-const HUE_END = 330;
 
 function getNodePositions(
   nodes: GraphResponse["nodes"],
@@ -39,6 +41,7 @@ interface GraphBoardProps {
   status: GameStatus;
   bestPath: string[];
   showBestPath: boolean;
+  themeId?: GraphBoardThemeId;
   onNodeClick: (nodeId: string) => void;
 }
 
@@ -50,8 +53,11 @@ export default function GraphBoard({
   status,
   bestPath,
   showBestPath,
+  themeId,
   onNodeClick,
 }: GraphBoardProps) {
+  const theme = useMemo(() => getGraphBoardTheme(themeId), [themeId]);
+
   const positions = useMemo(
     () => getNodePositions(graph.nodes, SVG_SIZE, SVG_SIZE),
     [graph.nodes],
@@ -64,12 +70,12 @@ export default function GraphBoard({
 
     graph.nodes.forEach((node) => {
       if (node.id === sourceNode) {
-        hues[node.id] = HUE_START;
+        hues[node.id] = theme.hues.start;
         return;
       }
 
       if (node.id === targetNode) {
-        hues[node.id] = HUE_END;
+        hues[node.id] = theme.hues.end;
         return;
       }
 
@@ -83,13 +89,16 @@ export default function GraphBoard({
       );
       const totalDist = dSrc + dTgt;
       const ratio = totalDist === 0 ? 0 : dSrc / totalDist;
-      hues[node.id] = HUE_START + (HUE_END - HUE_START) * ratio;
+      hues[node.id] = theme.hues.start + (theme.hues.end - theme.hues.start) * ratio;
     });
 
     return hues;
-  }, [graph.nodes, positions, sourceNode, targetNode]);
+  }, [graph.nodes, positions, sourceNode, targetNode, theme.hues.end, theme.hues.start]);
 
-  const getColor = useCallback((hue: number) => `oklch(0.60 0.18 ${hue})`, []);
+  const getColor = useCallback(
+    (hue: number) => `oklch(${theme.node.lightness} ${theme.node.chroma} ${hue})`,
+    [theme.node.chroma, theme.node.lightness],
+  );
 
   const selectedEdgeKeys = useMemo(() => {
     const keys = new Set<string>();
@@ -213,16 +222,23 @@ export default function GraphBoard({
                   x2={lineEnd.x}
                   y2={lineEnd.y}
                   pathLength={1}
-                  strokeWidth={inUser || inBest ? 4 : 1.5}
-                  stroke={inUser || inBest ? `url(#${gradientId})` : "var(--border)"}
+                  strokeWidth={
+                    inUser || inBest
+                      ? theme.edge.activeStrokeWidth
+                      : theme.edge.inactiveStrokeWidth
+                  }
+                  stroke={inUser || inBest ? `url(#${gradientId})` : theme.edge.inactiveStroke}
                   className={cn(
                     "transition-all duration-200",
                     (inUser || inBest) && "animate-draw",
                   )}
                   style={{
-                    opacity: inUser || inBest ? 1 : 0.4,
+                    opacity: inUser || inBest ? 1 : theme.edge.inactiveOpacity,
                     strokeDasharray: inUser || inBest ? 1 : undefined,
-                    animation: inUser || inBest ? "drawEdge 0.35s ease-out forwards" : undefined,
+                    animation:
+                      inUser || inBest
+                        ? `drawEdge ${theme.edge.drawDurationMs}ms ease-out forwards`
+                        : undefined,
                   }}
                 />
                 <rect
@@ -231,8 +247,8 @@ export default function GraphBoard({
                   width={20}
                   height={16}
                   rx={4}
-                  fill={inUser || inBest ? getColor(midHue) : "var(--card)"}
-                  stroke={inUser || inBest ? "transparent" : "var(--border)"}
+                  fill={inUser || inBest ? getColor(midHue) : theme.edge.inactiveLabelFill}
+                  stroke={inUser || inBest ? "transparent" : theme.edge.inactiveLabelStroke}
                   strokeWidth={1}
                   className="transition-colors duration-200"
                 />
@@ -242,7 +258,11 @@ export default function GraphBoard({
                   textAnchor="middle"
                   fontSize={10}
                   fontWeight={inUser || inBest ? "700" : "500"}
-                  fill={inUser || inBest ? "oklch(0.98 0 0)" : "var(--muted-foreground)"}
+                  fill={
+                    inUser || inBest
+                      ? theme.edge.activeLabelText
+                      : theme.edge.inactiveLabelText
+                  }
                   fontFamily="var(--font-mono)"
                   className="transition-colors duration-200"
                 >
@@ -268,14 +288,14 @@ export default function GraphBoard({
                   (edge.source === node.id && edge.target === lastSelected),
               );
 
-            let nodeColor = "var(--card)";
-            let strokeColor = "var(--border)";
-            let textColor = "var(--foreground)";
+            let nodeColor = theme.node.inactiveFill;
+            let strokeColor = theme.node.inactiveStroke;
+            let textColor = theme.node.inactiveText;
 
             if (isSelected || isSource || isTarget) {
               nodeColor = getColor(nodeHues[node.id]);
               strokeColor = nodeColor;
-              textColor = "oklch(0.98 0 0)";
+              textColor = theme.node.activeText;
             }
 
             return (
