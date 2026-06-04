@@ -4,6 +4,9 @@
     "description": "Impossibile trovare la risorsa richiesta",
     "home-link": "Torna alla home"
   },
+  "home-link": {
+    "home": "Pagina iniziale"
+  },
   "theme-switch": {
     "toggle-theme": "Cambia il tema",
     "light": "Cambia il tema in Chiaro",
@@ -19,7 +22,8 @@
     "open": "Apri impostazioni",
     "title": "Impostazioni",
     "theme": "Tema",
-    "language": "Lingua"
+    "language": "Lingua",
+    "home": "Pagina iniziale"
   },
   "home-page": {
     "game-title": "Graphle",
