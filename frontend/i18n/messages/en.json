@@ -4,6 +4,9 @@
         "description": "Could not find requested resource",
         "home-link": "Go back home"
     },
+    "home-link": {
+        "home": "Home"
+    },
     "theme-switch": {
         "toggle-theme": "Toggle theme",
         "light": "Switch to light",
@@ -18,7 +21,8 @@
         "open": "Open settings",
         "title": "Settings",
         "theme": "Theme",
-        "language": "Language"
+        "language": "Language",
+        "home": "Home"
     },
     "home-page": {
         "game-title": "Graphle",

@@ -13,6 +13,7 @@ import {
 import { ThemeSwitch } from "@/components/switches/theme-switch"
 import { LocaleSwitch } from "@/components/switches/locale-switch"
 import { useTranslations } from "next-intl"
+import { HomeLink } from "../home-page/home-link"
 
 export function ControlsDrawer() {
   const [open, setOpen] = useState(false)
@@ -40,6 +41,10 @@ export function ControlsDrawer() {
             <div className="flex flex-col gap-4">
               {/* Each row: icon button + label */}
               <div className="flex items-center gap-3">
+                <HomeLink />
+                <span className="text-sm text-muted-foreground">{t("home")}</span>
+              </div>
+              <div className="flex items-center gap-3">
                 <ThemeSwitch />
                 <span className="text-sm text-muted-foreground">{t("theme")}</span>
               </div>
@@ -54,6 +59,7 @@ export function ControlsDrawer() {
 
       {/* Desktop: render switches directly, side by side */}
       <div className="hidden sm:flex sm:flex-col lg:flex-row lg:gap-2">
+        <HomeLink />
         <ThemeSwitch />
         <LocaleSwitch />
       </div>
