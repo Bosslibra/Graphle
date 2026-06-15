@@ -22,7 +22,13 @@
         "title": "Settings",
         "theme": "Theme",
         "language": "Language",
-        "home": "Home"
+        "home": "Home",
+        "skin": "Skin"
+    },
+    "skin-switch": {
+        "select": "Select skin",
+        "title": "Site skins",
+        "hint": "Skins apply to layout, UI components and graph visuals."
     },
     "home-page": {
         "game-title": "Graphle",

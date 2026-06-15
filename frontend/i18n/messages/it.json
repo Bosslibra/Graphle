@@ -23,7 +23,13 @@
     "title": "Impostazioni",
     "theme": "Tema",
     "language": "Lingua",
-    "home": "Pagina iniziale"
+    "home": "Pagina iniziale",
+    "skin": "Skin"
+  },
+  "skin-switch": {
+    "select": "Seleziona skin",
+    "title": "Skin del sito",
+    "hint": "Le skin aggiornano layout, componenti UI e grafi."
   },
   "home-page": {
     "game-title": "Graphle",

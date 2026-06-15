@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sheet"
 import { ThemeSwitch } from "@/components/switches/theme-switch"
 import { LocaleSwitch } from "@/components/switches/locale-switch"
+import { SkinSwitch } from "@/components/switches/skin-switch"
 import { useTranslations } from "next-intl"
 import { HomeLink } from "../home-page/home-link"
 
@@ -33,7 +34,7 @@ export function ControlsDrawer() {
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-56 p-6"
+          <SheetContent side="left" className="w-56 border-r border-border/60 p-6 backdrop-blur-md [background:var(--graphle-muted-bg)]"
           onOpenAutoFocus={(event) => event.preventDefault()}>
             <SheetHeader className="mb-6">
               <SheetTitle>{t("title")}</SheetTitle>
@@ -49,6 +50,10 @@ export function ControlsDrawer() {
                 <span className="text-sm text-muted-foreground">{t("theme")}</span>
               </div>
               <div className="flex items-center gap-3">
+                <SkinSwitch />
+                <span className="text-sm text-muted-foreground">{t("skin")}</span>
+              </div>
+              <div className="flex items-center gap-3">
                 <LocaleSwitch />
                 <span className="text-sm text-muted-foreground">{t("language")}</span>
               </div>
@@ -61,6 +66,7 @@ export function ControlsDrawer() {
       <div className="hidden sm:flex sm:flex-col lg:flex-row lg:gap-2">
         <HomeLink />
         <ThemeSwitch />
+        <SkinSwitch />
         <LocaleSwitch />
       </div>
     </>
