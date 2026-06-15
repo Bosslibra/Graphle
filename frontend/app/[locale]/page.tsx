@@ -35,7 +35,7 @@ export default function HomePage({
   const t = useTranslations("home-page");
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-transparent px-4 pt-16 sm:pt-4 text-foreground">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pt-16 text-foreground sm:pt-4">
 
       
       {/* Help — fixed so it stays visible on scroll */}
@@ -44,12 +44,13 @@ export default function HomePage({
       </div>
 
       {/* Card */}
-      <Card className="relative w-full max-w-sm backdrop-blur-sm lg:max-w-md mx-4 sm:mx-0">
+      <Card className="relative mx-4 w-full max-w-sm border-border/70 shadow-2xl backdrop-blur-lg sm:mx-0 lg:max-w-md [background:var(--graphle-surface-bg)]">
         <CardHeader className="items-center text-center">
-          <div className="mb-2 flex h-12 w-12 sm:h-14 sm:w-14 m-auto items-center justify-center rounded-2xl border bg-background shadow-sm">
-            <Network className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
+          <div className="relative mb-2 m-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-border/60 bg-background/80 shadow-sm sm:h-14 sm:w-14">
+            <div className="pointer-events-none absolute inset-[0.35rem] bg-primary/85 [mask-image:var(--skin-brand-icon)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]" />
+            <Network className="relative h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
           </div>
-          <CardTitle className="text-2xl font-semibold tracking-tight">
+          <CardTitle className="font-heading text-2xl font-semibold tracking-tight">
             {t("game-title")}
           </CardTitle>
           <CardDescription className="text-sm leading-snug">

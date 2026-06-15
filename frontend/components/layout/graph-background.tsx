@@ -1,5 +1,8 @@
 "use client";
 
+import type { CSSProperties } from "react";
+import { useCurrentSkinVariant } from "@/contexts/site-skin-context";
+
 /**
  * GraphBackground — static SVG graph background for Graphle.
  *
@@ -8,8 +11,11 @@
  * - Adapts to next-themes .dark class automatically
  * - Hub nodes (larger) add visual weight hierarchy
  * - Quadratic distance falloff on edge opacity
+ * - Tints with the active board theme hue
  */
 export default function GraphBackground() {
+  const variant = useCurrentSkinVariant();
+
   return (
     <svg
       aria-hidden="true"
@@ -20,30 +26,44 @@ export default function GraphBackground() {
     >
       <style>{`
         .g-graph {
-          --gfg: oklch(0.145 0 0);
-          opacity: 0.42;
+          --gfg: var(--graph-backdrop-color);
+          opacity: var(--graph-backdrop-opacity);
           transition: opacity 0.3s;
-        }
-        .dark .g-graph {
-          --gfg: oklch(0.985 0 0);
-          opacity: 0.28;
         }
         .g-edge {
           stroke: var(--gfg);
-          stroke-width: 0.75;
+          stroke-width: var(--graph-backdrop-edge-width);
+          opacity: var(--graph-backdrop-edge-opacity);
           stroke-linecap: round;
           fill: none;
+          transition: stroke 0.5s;
         }
         .g-node {
           fill: var(--gfg);
-          opacity: 0.28;
+          opacity: var(--graph-backdrop-node-opacity);
+          transition: fill 0.5s;
         }
         .g-hub {
-          opacity: 0.50;
+          opacity: var(--graph-backdrop-hub-opacity);
         }
       `}</style>
 
       <g className="g-graph">
+        {variant.assets?.graphBackdropSvg && (
+          <image
+            href={variant.assets.graphBackdropSvg}
+            x="0"
+            y="0"
+            width="1440"
+            height="900"
+            preserveAspectRatio="xMidYMid slice"
+            style={{
+              opacity: Number.parseFloat(variant.graph.backdrop.imageOpacity),
+              mixBlendMode: variant.graph.backdrop.imageBlendMode as CSSProperties["mixBlendMode"],
+            }}
+          />
+        )}
+
         {/* ── edges ── */}
         <line x1="129.9" y1="374.5" x2="210.9" y2="462.5" className="g-edge" style={{opacity:0.218}}/>
         <line x1="210.9" y1="462.5" x2="345.9" y2="284.6" className="g-edge" style={{opacity:0.178}}/>

@@ -42,15 +42,22 @@ export default function TimedMode({ graph: initialGraph }: TimedModeProps) {
   }
 
   return (
-    <div className="w-full max-w-sm mx-auto space-y-2">
-      <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+    <div className="flex w-full flex-col items-center gap-2">
+      <div className="flex w-full max-w-md items-center justify-between px-1 text-xs text-muted-foreground">
         <span>{t("solved")}: <strong className="text-foreground">{solvedCount}</strong></span>
         <span>{t("timeLeft")}: <strong className="text-foreground">{formatSeconds(remaining)}</strong></span>
       </div>
-      {isPending && (
-        <p className="text-xs text-center text-muted-foreground">{t("loading")}</p>
-      )}
-      <GraphSession key={graph.seed} graph={graph} onComplete={handleComplete} onRestart={nextGraph} />
+
+      {isPending && <p className="text-xs text-center text-muted-foreground">{t("loading")}</p>}
+
+      <div className="flex w-full justify-center">
+        <GraphSession
+          key={graph.seed}
+          graph={graph}
+          onComplete={handleComplete}
+          onRestart={nextGraph}
+        />
+      </div>
     </div>
   );
 }

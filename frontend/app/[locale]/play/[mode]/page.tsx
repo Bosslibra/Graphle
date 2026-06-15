@@ -12,8 +12,10 @@ export default async function PlayPage({ params, searchParams }: PlayPageProps) 
   setRequestLocale(locale);
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-8">
-      <PlayModeContent mode={mode} seed={seed} />
+    <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-8 [background:var(--graphle-page-bg)]">
+      
+        <PlayModeContent mode={mode} seed={seed} />
+      
     </div>
   );
 }

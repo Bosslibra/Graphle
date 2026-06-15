@@ -20,8 +20,11 @@ export default function ChallengeMode({ graph }: ChallengeModeProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <GraphSession graph={graph} />
+    <div className="flex w-full flex-col items-center gap-3">
+      <div className="flex w-full justify-center">
+        <GraphSession graph={graph} />
+      </div>
+
       <Button variant="outline" size="sm" onClick={copySeed}>
         {copied ? t("copied") : t("copySeed")}
       </Button>

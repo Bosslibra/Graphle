@@ -8,8 +8,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,6 +49,10 @@
 }
 
 :root {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-space-grotesk);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-size-base: 18px;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -81,6 +85,33 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --graphle-page-bg: linear-gradient(145deg, oklch(0.98 0.03 220), oklch(0.95 0.04 295));
+  --graphle-page-bg-image: none;
+  --graphle-page-bg-image-size: cover;
+  --graphle-page-bg-pattern: none;
+  --graphle-page-bg-pattern-size: 220px;
+  --graphle-surface-bg: oklch(1 0 0 / 72%);
+  --graphle-muted-bg: oklch(1 0 0 / 78%);
+  --graphle-graph-bg: linear-gradient(135deg, oklch(0.96 0.03 200), oklch(0.93 0.04 300));
+  --graph-path-chip-bg: oklch(0.25 0.02 255 / 80%);
+  --graph-path-chip-fg: oklch(0.98 0 0);
+  --graph-path-chip-border: oklch(0.65 0.05 250 / 45%);
+  --graph-result-win-border: oklch(0.62 0.14 155 / 45%);
+  --graph-result-win-bg: oklch(0.95 0.03 155 / 70%);
+  --graph-result-win-fg: oklch(0.42 0.1 150);
+  --graph-result-loss-border: oklch(0.63 0.2 24 / 40%);
+  --graph-result-loss-bg: oklch(0.97 0.04 22 / 76%);
+  --graph-result-loss-fg: oklch(0.52 0.17 24);
+  --graph-board-border: var(--border);
+  --graph-backdrop-color: oklch(0.35 0.06 220);
+  --graph-backdrop-opacity: 0.55;
+  --graph-backdrop-edge-width: 0.75;
+  --graph-backdrop-edge-opacity: 1;
+  --graph-backdrop-node-opacity: 0.28;
+  --graph-backdrop-hub-opacity: 0.5;
+  --graph-backdrop-image-opacity: 0.14;
+  --graph-backdrop-image-blend: screen;
+  --skin-brand-icon: none;
 }
 
 .dark {
@@ -121,14 +152,38 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    background-image:
+      var(--graphle-page-bg-pattern),
+      var(--graphle-page-bg-image),
+      var(--graphle-page-bg);
+    background-size:
+      var(--graphle-page-bg-pattern-size),
+      var(--graphle-page-bg-image-size),
+      cover;
+    background-position: center, center, center;
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-attachment: fixed, fixed, fixed;
+  }
+  body {
+    @apply text-foreground;
+    transition: background-image 0.5s ease, background-color 0.3s ease;
   }
   html {
     @apply font-sans;
   }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
 }
 
 html {
-  font-size: 18px;
+  font-size: var(--font-size-base);
 }

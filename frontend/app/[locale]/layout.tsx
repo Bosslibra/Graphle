@@ -3,17 +3,19 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { ThemeProvider } from "@/components/switches/theme-provider";
+import { SiteSkinProvider } from "@/contexts/site-skin-context";
 import { ControlsDrawer } from "@/components/layout/controls-drawer";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Fraunces, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { setRequestLocale } from "next-intl/server";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import GraphBackground from "@/components/layout/graph-background";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
 
 export const metadata: Metadata = {
   title: "Graphle",
@@ -45,10 +47,11 @@ export default async function RootLayout({
       className={cn(
         "h-full",
         "antialiased",
-        geistSans.variable,
-        geistMono.variable,
+        inter.variable,
+        spaceGrotesk.variable,
+        fraunces.variable,
+        jetbrainsMono.variable,
         "font-sans",
-        inter.variable
       )}
       suppressHydrationWarning
     >
@@ -60,17 +63,19 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TooltipProvider>
-              {/* Site-wide graph background */}
-              <GraphBackground />
-              
-              {/* Single entry point for all UI controls */}
-              <div className="fixed left-4 top-4 sm:left-6 sm:top-6 z-50">
-                <ControlsDrawer />
-              </div>
+            <SiteSkinProvider>
+              <TooltipProvider>
+                {/* Site-wide graph background */}
+                <GraphBackground />
+                
+                {/* Single entry point for all UI controls */}
+                <div className="fixed left-4 top-4 sm:left-6 sm:top-6 z-50">
+                  <ControlsDrawer />
+                </div>
 
-              {children}
-            </TooltipProvider>
+                {children}
+              </TooltipProvider>
+            </SiteSkinProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

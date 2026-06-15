@@ -4,10 +4,7 @@ import { Fragment, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Edge, GameStatus, GraphResponse } from "@/components/game/types";
-import {
-  getGraphBoardTheme,
-  GraphBoardThemeId,
-} from "@/components/game/board-themes";
+import { useCurrentSkinVariant } from "@/contexts/site-skin-context";
 
 const NODE_RADIUS = 22;
 const SVG_SIZE = 380;
@@ -41,7 +38,6 @@ interface GraphBoardProps {
   status: GameStatus;
   bestPath: string[];
   showBestPath: boolean;
-  themeId?: GraphBoardThemeId;
   onNodeClick: (nodeId: string) => void;
 }
 
@@ -53,10 +49,10 @@ export default function GraphBoard({
   status,
   bestPath,
   showBestPath,
-  themeId,
   onNodeClick,
 }: GraphBoardProps) {
-  const theme = useMemo(() => getGraphBoardTheme(themeId), [themeId]);
+  const variant = useCurrentSkinVariant();
+  const theme = useMemo(() => variant.graph, [variant.graph]);
 
   const positions = useMemo(
     () => getNodePositions(graph.nodes, SVG_SIZE, SVG_SIZE),
@@ -151,7 +147,14 @@ export default function GraphBoard({
   const lastSelected = selected[selected.length - 1];
 
   return (
-    <Card className="w-full p-2 overflow-hidden border-muted">
+    <Card
+      className="w-full overflow-hidden border p-2"
+      style={{
+        background: "var(--graphle-graph-bg)",
+        borderColor: "var(--graph-board-border)",
+        transition: "background 0.5s ease, border-color 0.3s ease",
+      }}
+    >
       <CardContent className="p-0">
         <svg
           viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
@@ -188,6 +191,18 @@ export default function GraphBoard({
               </Fragment>
             ))}
           </defs>
+
+          {variant.assets?.graphOverlaySvg && (
+            <image
+              href={variant.assets.graphOverlaySvg}
+              x={0}
+              y={0}
+              width={SVG_SIZE}
+              height={SVG_SIZE}
+              preserveAspectRatio="none"
+              opacity={0.18}
+            />
+          )}
 
           {graph.edges.map((edge) => {
             const s = positions[edge.source];
@@ -256,7 +271,7 @@ export default function GraphBoard({
                   x={mx}
                   y={my + 3}
                   textAnchor="middle"
-                  fontSize={10}
+                  fontSize={theme.edge.labelFontSize}
                   fontWeight={inUser || inBest ? "700" : "500"}
                   fill={
                     inUser || inBest
@@ -321,7 +336,7 @@ export default function GraphBoard({
                   x={pos.x}
                   y={pos.y + 5}
                   textAnchor="middle"
-                  fontSize={13}
+                  fontSize={theme.node.labelFontSize}
                   fontWeight={isSelected || isSource || isTarget ? "700" : "600"}
                   fill={textColor}
                   fontFamily="var(--font-sans)"

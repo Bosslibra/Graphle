@@ -36,9 +36,13 @@ export default function DailyMode({ graph }: DailyModeProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3 items-center">
+    <div className="flex w-full flex-col items-center gap-3">
       <p className="text-xs text-muted-foreground">{t("puzzleNumber", { puzzleNumber })}</p>
-      <GraphSession graph={graph} onComplete={handleComplete} />
+
+      <div className="flex w-full justify-center">
+        <GraphSession graph={graph} onComplete={handleComplete} />
+      </div>
+
       {shareText && (
         <Button variant="outline" size="sm" onClick={copyShareText}>
           {t("copyResult")}

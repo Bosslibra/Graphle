@@ -21,11 +21,12 @@ export default function PracticeMode({ graph: initialGraph }: PracticeModeProps)
   }
 
   return (
-    <div className="w-full max-w-sm mx-auto">
-      {isPending && (
-        <p className="text-xs text-center text-muted-foreground mb-2">{t("loading")}</p>
-      )}
-      <GraphSession key={graph.seed} graph={graph} onRestart={handleRestart} />
+    <div className="flex w-full flex-col items-center gap-2">
+      {isPending && <p className="text-xs text-center text-muted-foreground">{t("loading")}</p>}
+
+      <div className="flex w-full justify-center">
+        <GraphSession key={graph.seed} graph={graph} onRestart={handleRestart} />
+      </div>
     </div>
   );
 }

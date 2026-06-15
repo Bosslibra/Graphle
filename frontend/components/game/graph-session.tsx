@@ -10,9 +10,6 @@ import { cn } from "@/lib/utils";
 import GraphBoard from "@/components/game/graph-board";
 import { GameStatus, GraphResponse } from "@/components/game/types";
 import { dijkstra } from "@/components/game/helpers";
-import { GraphBoardThemeId } from "@/components/game/board-themes";
-
-
 
 interface GraphSessionProps {
   graph: GraphResponse;
@@ -21,7 +18,6 @@ interface GraphSessionProps {
   onComplete?: (won: boolean, userCost: number, bestCost: number) => void;
   onRestart?: () => void;
   showSeed?: boolean;
-  boardThemeId?: GraphBoardThemeId;
 }
 
 export default function GraphSession({
@@ -31,7 +27,6 @@ export default function GraphSession({
   onComplete,
   onRestart,
   showSeed = true,
-  boardThemeId,
 }: GraphSessionProps) {
   const t = useTranslations("game-session");
   const src = sourceNode ?? graph.nodes[0].id;
@@ -125,7 +120,7 @@ export default function GraphSession({
   const showBestPath = status === "won" || status === "lost";
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
+    <div className="mx-auto flex w-full max-w-[min(92vw,28rem)] flex-col items-center gap-4 rounded-2xl border border-border/60 p-3 backdrop-blur-md [background:var(--graphle-muted-bg)]">
       <style>{`
         @keyframes drawEdge {
           from { stroke-dashoffset: 1; }
@@ -151,14 +146,13 @@ export default function GraphSession({
         status={status}
         bestPath={bestPath}
         showBestPath={showBestPath}
-        themeId={boardThemeId}
         onNodeClick={handleNodeClick}
       />
 
       <div className="flex w-full items-center gap-1 flex-wrap min-h-[28px] px-1">
         {selected.map((id, i) => (
           <span key={i} className="flex items-center gap-1 text-sm">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-semibold text-white bg-foreground/70 shadow-sm transition-colors duration-300">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border px-1 text-xs font-semibold shadow-sm transition-colors duration-300 border-[var(--graph-path-chip-border)] bg-[var(--graph-path-chip-bg)] text-[var(--graph-path-chip-fg)]">
               {id}
             </span>
             {i < selected.length - 1 && (
@@ -175,8 +169,8 @@ export default function GraphSession({
             className={cn(
               "w-full rounded-xl border px-4 py-3 flex flex-col gap-1",
               status === "won"
-                ? "border-green-500/30 bg-green-500/5 text-green-700 dark:text-green-400"
-                : "border-destructive/30 bg-destructive/5 text-destructive",
+                ? "border-[var(--graph-result-win-border)] bg-[var(--graph-result-win-bg)] text-[var(--graph-result-win-fg)]"
+                : "border-[var(--graph-result-loss-border)] bg-[var(--graph-result-loss-bg)] text-[var(--graph-result-loss-fg)]",
             )}
           >
             <div className="flex items-center gap-2 font-semibold text-sm">
