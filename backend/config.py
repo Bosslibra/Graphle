@@ -3,14 +3,9 @@
 from datetime import timedelta
 from os import environ, path
 from dotenv import load_dotenv
-import yaml
 
 BASE_DIR = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(BASE_DIR, ".env"))
-
-# Load YAML configuration
-with open(path.join(BASE_DIR, "config.yaml"), "r") as f:
-    _yaml_config = yaml.safe_load(f) or {}
 
 
 def _is_truthy(value, default=False):
@@ -26,7 +21,7 @@ class Config:
     ENVIRONMENT = None  # Set by subclasses
 
     # Flask Core
-    SECRET_KEY = environ.get("TRACK_SECRET_KEY")
+    SECRET_KEY = environ.get("SECRET_KEY")
     FLASK_DEBUG = _is_truthy(environ.get("FLASK_DEBUG"), False)
     FLASK_APP = "wsgi.py"
 
@@ -38,28 +33,13 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Strict"
     SESSION_COOKIE_SECURE = _is_truthy(
-            environ.get("TRACK_COOKIE_SECURE"),
+            environ.get("COOKIE_SECURE"),
             True
         )
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
 
     # Request limits
     MAX_CONTENT_LENGTH = 1024 * 1024  # 1MB
-
-    # Authentication & Rate Limiting
-    _auth_config = (
-        _yaml_config
-        .get("authentication", {})
-        .get("rate_limiting", {})
-    )
-    MAX_LOGIN_ATTEMPTS = _auth_config.get("max_attempts", 3)
-    LOGIN_ATTEMPT_WINDOW_SECONDS = _auth_config.get("window_seconds", 600)
-    LOGIN_LOCKOUT_SECONDS = _auth_config.get("lockout_seconds", 900)
-    DUMMY_HASH = (
-        _yaml_config.get("authentication", {})
-        .get("anti_timing_attack", {})
-        .get("dummy_hash")
-    )
 
     # OpenAPI Docs visiibility
     ENABLE_SCALAR = False

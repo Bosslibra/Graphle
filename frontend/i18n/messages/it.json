@@ -33,67 +33,177 @@
   },
   "home-page": {
     "game-title": "Graphle",
-    "game-subtitle": "Il puzzle giornaliero di teoria dei grafi",
-    "next-puzzle": "Prossimo puzzle tra",
-    "play-daily": "Gioca il puzzle di oggi",
-    "other-modes": "Altre modalità",
-    "modes-daily": "Giornaliero",
-    "modes-practice": "Allenamento",
-    "modes-timed": "A tempo",
-    "modes-challenge": "Sfida",
+    "game-subtitle": "Minigiochi quotidiani di teoria dei grafi",
+    "next-puzzle": "Nuovi puzzle tra",
+    "today": "Puzzle di oggi",
+    "modes-hint": "Apri un gioco per passare alle modalità Allenamento, A tempo o Sfida.",
+    "streak": "{count, plural, =0 {Nessuna serie} one {Serie di # giorno} other {Serie di # giorni}}",
+    "share": "Condividi oggi",
+    "shareText": "Graphle #{number}\n{line}\n{url}",
+    "shareState": {
+      "shared": "Condiviso!",
+      "copied": "Copiato negli appunti",
+      "failed": "Impossibile condividere"
+    },
     "help-modal": {
       "how-to-play": "Come si gioca",
-      "how-to-play-description": "Indovina il puzzle del grafo nel minor numero di tentativi possibile.",
+      "how-to-play-description": "Ogni giorno ogni minigioco ha un nuovo grafo, uguale per tutti. Ogni gioco ha le sue regole e una breve nota di teoria: aprile con il pulsante Regole.",
       "mode-daily": "Giornaliero",
-      "mode-daily-desc": "Un puzzle ufficiale al giorno, si azzera a mezzanotte.",
+      "mode-daily-desc": "Un puzzle ufficiale al giorno per ogni gioco. Conta solo il primo tentativo; i nuovi puzzle arrivano a mezzanotte UTC.",
       "mode-practice": "Allenamento",
-      "mode-practice-desc": "Affina le tue abilità con puzzle illimitati.",
+      "mode-practice-desc": "Grafi casuali illimitati per allenarti.",
       "mode-timed": "A tempo",
-      "mode-timed-desc": "Risolvi quanti più puzzle possibili prima che scada il tempo.",
+      "mode-timed-desc": "Risolvi più grafi che puoi in 2 minuti.",
       "mode-challenge": "Sfida",
-      "mode-challenge-desc": "Crea e condividi una sfida con un seed."
+      "mode-challenge-desc": "Condividi un link: il tuo amico riceve esattamente lo stesso grafo."
     }
   },
-  "game-session": {
-    "from": "Da",
-    "cost": "Costo",
-    "seed": "Seed",
-    "result": {
-      "wonTitle": "Percorso minimo trovato!",
-      "lostTitle": "Non e il percorso minimo",
-      "yourCost": "Il tuo costo",
-      "best": "Migliore",
-      "optimal": "Ottimale"
+  "games": {
+    "shortest-path": {
+      "name": "Percorso minimo",
+      "short": "Dijkstra",
+      "tagline": "Trova la strada più economica tra due nodi.",
+      "rules": [
+        "Parti dal nodo A e devi arrivare alla destinazione indicata sopra il grafo.",
+        "Clicca un nodo vicino per percorrere l'arco: il suo peso si aggiunge al costo.",
+        "Con Annulla torni indietro di un passo. Quando arrivi alla destinazione, conferma.",
+        "Vinci se il costo totale è il minimo possibile."
+      ],
+      "theory": [
+        "L'algoritmo di Dijkstra (1956) risolve esattamente questo problema. Tiene una distanza provvisoria per ogni nodo e, a ogni passo, fissa il nodo non ancora fissato più vicino e rilassa gli archi che ne escono.",
+        "È un algoritmo greedy, e funziona perché i pesi non sono mai negativi: quando un nodo è il più vicino tra quelli non fissati, nessuna deviazione successiva può renderlo più economico.",
+        "Con una coda di priorità costa O((V + E) log V). È alla base dei navigatori e di protocolli di routing come OSPF."
+      ],
+      "link": "https://it.wikipedia.org/wiki/Algoritmo_di_Dijkstra",
+      "info": "Da {src} a {tgt}",
+      "stat": "Costo: {cost}",
+      "won": "Percorso minimo trovato!",
+      "lost": "Non è il percorso minimo",
+      "wonDetail": "Costo {cost}: ottimo.",
+      "lostDetail": "Il tuo costo {cost} · minimo {best} passando per {path}"
     },
-    "controls": {
-      "back": "Indietro",
-      "submit": "Conferma",
-      "undo": "Annulla",
-      "reset": "Ricomincia",
-      "newGame": "Nuova partita"
+    "mst": {
+      "name": "Albero ricoprente minimo",
+      "short": "Kruskal · Prim",
+      "tagline": "Collega tutti i nodi con l'insieme di archi più leggero.",
+      "rules": [
+        "Clicca un arco per selezionarlo, cliccalo di nuovo per toglierlo.",
+        "Scegli esattamente n − 1 archi (il contatore li mostra) che colleghino tutti i nodi senza formare cicli.",
+        "Vinci se il peso totale è il minimo possibile. Se più alberi sono a pari merito, va bene uno qualsiasi."
+      ],
+      "theory": [
+        "Un albero ricoprente raggiunge tutti i nodi senza cicli; in un grafo con n nodi servono sempre esattamente n − 1 archi.",
+        "L'algoritmo di Kruskal ordina gli archi per peso e aggiunge ognuno a meno che non chiuda un ciclo (lo si controlla con una struttura union-find). L'algoritmo di Prim fa crescere un unico albero da un nodo, prendendo sempre l'arco più economico che ne esce.",
+        "Entrambi sono corretti grazie alla proprietà del taglio: per ogni divisione dei nodi in due gruppi, l'arco più leggero che attraversa la divisione appartiene a qualche albero ricoprente minimo. È il modello classico per costruire la rete più economica di cavi, tubi o strade."
+      ],
+      "link": "https://it.wikipedia.org/wiki/Albero_ricoprente_minimo",
+      "info": "Archi {count}/{needed}",
+      "stat": "Peso: {weight}",
+      "won": "Albero ricoprente minimo!",
+      "lost": "Non è minimo",
+      "wonDetail": "Peso totale {weight}: ottimo.",
+      "lostDetail": "Il tuo albero pesa {weight} · minimo {best}. Gli archi verdi mostrano un albero ottimo.",
+      "notTree": "Questi archi non formano un albero (c'è un ciclo o un nodo è escluso). Peso minimo: {best}."
+    },
+    "coloring": {
+      "name": "Colorazione",
+      "short": "Numero cromatico",
+      "tagline": "Colora i nodi in modo che i vicini siano sempre diversi, con meno colori possibile.",
+      "rules": [
+        "Clicca un nodo per colorarlo; cliccalo ancora per cambiare colore (dopo l'ultimo torna senza colore).",
+        "Due nodi collegati da un arco devono avere colori diversi: gli archi in conflitto diventano rossi.",
+        "Colora tutti i nodi e conferma. Vinci senza conflitti e con il numero minimo di colori."
+      ],
+      "theory": [
+        "Il numero minimo di colori necessari è il numero cromatico χ(G). Un grafo con χ ≤ 2 è bipartito: non ha cicli di lunghezza dispari.",
+        "Decidere se χ ≤ 3 è NP-completo, quindi non si conosce un algoritmo veloce per grafi grandi. Con pochi nodi si possono provare tutte le possibilità (backtracking), ed è così che il gioco ti verifica.",
+        "Il teorema dei quattro colori (1976, una delle prime dimostrazioni fatte con il computer) dice che ogni mappa planare richiede al massimo 4 colori. La colorazione modella anche gli orari: esami con studenti in comune non possono stare nello stesso turno."
+      ],
+      "link": "https://it.wikipedia.org/wiki/Colorazione_dei_grafi",
+      "info": "I vicini devono essere diversi",
+      "stat": "Colori {used} · conflitti {conflicts}",
+      "won": "Colorazione ottima!",
+      "lost": "Non è ottima",
+      "wonDetail": "{used} colori: è il numero cromatico.",
+      "lostDetail": "Hai usato {used} colori; ne bastano {best}.",
+      "conflictDetail": "{count, plural, one {# arco collega} other {# archi collegano}} nodi dello stesso colore. Minimo: {best} colori."
+    },
+    "bfs": {
+      "name": "Visita in ampiezza",
+      "short": "BFS",
+      "tagline": "Indovina l'ordine in cui la BFS visita i nodi.",
+      "rules": [
+        "La visita parte dal nodo A, già selezionato.",
+        "Clicca gli altri nodi nell'ordine in cui li visita una ricerca in ampiezza.",
+        "Se un nodo ha più vicini non visitati, la BFS li prende in ordine alfabetico.",
+        "Conferma quando tutti i nodi sono nella lista: vinci se l'ordine è esatto."
+      ],
+      "theory": [
+        "La ricerca in ampiezza esplora il grafo a ondate: prima il nodo di partenza, poi tutti i suoi vicini, poi i vicini dei vicini, e così via.",
+        "Usa una coda (il primo che entra è il primo che esce): prendi il nodo in testa e metti in fondo i suoi vicini non visitati. Sostituendo la coda con una pila si ottiene la ricerca in profondità (DFS), che scende il più possibile prima di tornare indietro.",
+        "Nei grafi senza pesi la BFS trova il cammino con meno archi verso ogni nodo, in tempo O(V + E). La usano i web crawler, i gradi di separazione nei social network e i risolutori di puzzle."
+      ],
+      "link": "https://it.wikipedia.org/wiki/Ricerca_in_ampiezza",
+      "info": "Parti da {src}",
+      "stat": "{count}/{total} nodi",
+      "won": "Ordine corretto!",
+      "lost": "Ordine sbagliato",
+      "wonDetail": "È proprio così che la BFS esplora questo grafo.",
+      "lostDetail": "Ordine BFS: {order}"
     }
   },
-  "play-modes": {
+  "game-shell": {
+    "undo": "Annulla",
+    "reset": "Ricomincia",
+    "submit": "Conferma",
+    "retry": "Riprova",
+    "newGame": "Nuova partita",
+    "seed": "Seed"
+  },
+  "explainer": {
+    "open": "Regole",
+    "rules": "Come si gioca",
+    "theory": "Un po' di teoria",
+    "readMore": "Approfondisci su Wikipedia",
+    "start": "Giochiamo"
+  },
+  "play": {
+    "modes": "Modalità di gioco",
+    "mode": {
+      "daily": "Giornaliero",
+      "practice": "Allenamento",
+      "timed": "A tempo",
+      "challenge": "Sfida"
+    },
     "daily": {
-      "puzzleNumber": "Puzzle giornaliero #{puzzleNumber}",
-      "copyResult": "Copia risultato",
-      "shareStatus": {
-        "solved": "Risolto",
-        "tried": "Tentato"
-      },
-      "shareText": "Graphle Daily #{puzzleNumber} {result}\nCosto {userCost} | Migliore {bestCost}"
+      "number": "Giornaliero #{number}",
+      "done": "Oggi: {result} {score}",
+      "share": "Condividi risultato",
+      "otherGames": "Altri giochi",
+      "shareText": "Graphle #{number} · {game}\n{emoji} {result} {score}\n{url}"
     },
     "practice": {
-      "loading": "Caricamento nuovo grafo..."
+      "hint": "Grafi casuali illimitati."
     },
     "timed": {
       "solved": "Risolti",
-      "timeLeft": "Tempo rimasto",
-      "loading": "Caricamento prossimo grafo..."
+      "over": "Tempo scaduto!",
+      "result": "{solved, plural, one {# puzzle risolto} other {# puzzle risolti}}",
+      "again": "Gioca ancora"
     },
     "challenge": {
-      "copySeed": "Copia seme sfida",
-      "copied": "Seme copiato"
+      "hint": "Manda questo grafo esatto a un amico.",
+      "share": "Copia link della sfida",
+      "shareText": "Riesci a battermi a Graphle ({game})? {url}"
+    },
+    "shareState": {
+      "shared": "Condiviso!",
+      "copied": "Copiato negli appunti",
+      "failed": "Impossibile condividere"
     }
+  },
+  "error-page": {
+    "title": "Qualcosa è andato storto",
+    "retry": "Riprova"
   }
 }

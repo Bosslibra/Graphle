@@ -1,98 +1,209 @@
 {
-    "not-found-page": {
-        "title": "Page not found",
-        "description": "Could not find requested resource",
-        "home-link": "Go back home"
+  "not-found-page": {
+    "title": "Page not found",
+    "description": "Could not find requested resource",
+    "home-link": "Go back home"
+  },
+  "home-link": {
+    "home": "Home"
+  },
+  "theme-switch": {
+    "toggle-theme": "Toggle theme",
+    "light": "Switch to light",
+    "dark": "Switch to dark",
+    "system": "Switch to system"
+  },
+  "locale-switch": {
+    "label": "Change language",
+    "en": "English",
+    "it": "Italian"
+  },
+  "controls-drawer": {
+    "open": "Open settings",
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "home": "Home",
+    "skin": "Skin"
+  },
+  "skin-switch": {
+    "select": "Select skin",
+    "title": "Site skins",
+    "hint": "Skins apply to layout, UI components and graph visuals."
+  },
+  "home-page": {
+    "game-title": "Graphle",
+    "game-subtitle": "Daily graph theory minigames",
+    "next-puzzle": "New puzzles in",
+    "today": "Today's puzzles",
+    "modes-hint": "Open a game to switch to Practice, Timed or Challenge mode.",
+    "streak": "{count, plural, =0 {No streak yet} one {# day streak} other {# day streak}}",
+    "share": "Share today",
+    "shareText": "Graphle #{number}\n{line}\n{url}",
+    "shareState": {
+      "shared": "Shared!",
+      "copied": "Copied to the clipboard",
+      "failed": "Could not share"
     },
-    "home-link": {
-        "home": "Home"
-    },
-    "theme-switch": {
-        "toggle-theme": "Toggle theme",
-        "light": "Switch to light",
-        "dark": "Switch to dark"
-    },
-    "locale-switch": {
-        "label": "Change language",
-        "en": "English",
-        "it": "Italian"
-    },
-    "controls-drawer": {
-        "open": "Open settings",
-        "title": "Settings",
-        "theme": "Theme",
-        "language": "Language",
-        "home": "Home",
-        "skin": "Skin"
-    },
-    "skin-switch": {
-        "select": "Select skin",
-        "title": "Site skins",
-        "hint": "Skins apply to layout, UI components and graph visuals."
-    },
-    "home-page": {
-        "game-title": "Graphle",
-        "game-subtitle": "Daily graph theory puzzle",
-        "next-puzzle": "Next puzzle in",
-        "play-daily": "Play today's puzzle",
-        "other-modes": "Other modes",
-        "modes-daily": "Daily",
-        "modes-practice": "Practice",
-        "modes-timed": "Timed",
-        "modes-challenge": "Challenge",
-        "help-modal": {
-            "how-to-play": "How to play",
-            "how-to-play-description": "Guess the graph puzzle in as few tries as possible.",
-            "mode-daily": "Daily",
-            "mode-daily-desc": "One official puzzle per day, resets at midnight.",
-            "mode-practice": "Practice",
-            "mode-practice-desc": "Hone your skills with unlimited puzzles.",
-            "mode-timed": "Timed",
-            "mode-timed-desc": "Solve as many as possible before time runs out.",
-            "mode-challenge": "Challenge",
-            "mode-challenge-desc": "Create and share a seeded challenge."
-        }
-    },
-    "game-session": {
-        "from": "From",
-        "cost": "Cost",
-        "seed": "Seed",
-        "result": {
-            "wonTitle": "Shortest path found!",
-            "lostTitle": "Not the shortest path",
-            "yourCost": "Your cost",
-            "best": "Best",
-            "optimal": "Optimal"
-        },
-        "controls": {
-            "back": "Back",
-            "submit": "Submit",
-            "undo": "Undo",
-            "reset": "Reset",
-            "newGame": "New game"
-        }
-    },
-    "play-modes": {
-        "daily": {
-            "puzzleNumber": "Daily puzzle #{puzzleNumber}",
-            "copyResult": "Copy result",
-            "shareStatus": {
-                "solved": "Solved",
-                "tried": "Tried"
-            },
-            "shareText": "Graphle Daily #{puzzleNumber} {result}\nCost {userCost} | Best {bestCost}"
-        },
-        "practice": {
-            "loading": "Loading new graph..."
-        },
-        "timed": {
-            "solved": "Solved",
-            "timeLeft": "Time left",
-            "loading": "Loading next graph..."
-        },
-        "challenge": {
-            "copySeed": "Copy challenge seed",
-            "copied": "Seed copied"
-        }
+    "help-modal": {
+      "how-to-play": "How to play",
+      "how-to-play-description": "Every day each minigame gets a new graph, the same for everyone. Every game has its own rules and a short theory note: open them with the Rules button.",
+      "mode-daily": "Daily",
+      "mode-daily-desc": "One official puzzle per game per day. Only your first attempt counts; new puzzles at midnight UTC.",
+      "mode-practice": "Practice",
+      "mode-practice-desc": "Unlimited random graphs to train on.",
+      "mode-timed": "Timed",
+      "mode-timed-desc": "Solve as many graphs as you can in 2 minutes.",
+      "mode-challenge": "Challenge",
+      "mode-challenge-desc": "Share a link: your friend gets exactly the same graph."
     }
+  },
+  "games": {
+    "shortest-path": {
+      "name": "Shortest path",
+      "short": "Dijkstra",
+      "tagline": "Find the cheapest route between two nodes.",
+      "rules": [
+        "You start on node A and must reach the target shown above the board.",
+        "Click a neighbouring node to move along an edge: its weight is added to your cost.",
+        "Use Undo to step back. When you reach the target, submit.",
+        "You win if your total cost equals the minimum possible."
+      ],
+      "theory": [
+        "Dijkstra's algorithm (1956) solves this exactly. It keeps a tentative distance for every node and repeatedly settles the closest unsettled node, relaxing the edges that leave it.",
+        "It is greedy, and greed works here because weights are never negative: once a node is the closest unsettled one, no later detour can make it cheaper.",
+        "With a priority queue it runs in O((V + E) log V). It powers route planners and network routing protocols such as OSPF."
+      ],
+      "link": "https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm",
+      "info": "From {src} to {tgt}",
+      "stat": "Cost: {cost}",
+      "won": "Shortest path found!",
+      "lost": "Not the shortest path",
+      "wonDetail": "Cost {cost}: optimal.",
+      "lostDetail": "Your cost {cost} · minimum {best} via {path}"
+    },
+    "mst": {
+      "name": "Minimum spanning tree",
+      "short": "Kruskal · Prim",
+      "tagline": "Connect every node using the lightest set of edges.",
+      "rules": [
+        "Click an edge to select it, click again to deselect it.",
+        "Pick exactly n − 1 edges (the counter shows how many) that connect every node without forming a cycle.",
+        "You win if the total weight is the minimum possible. When several trees tie, any of them counts."
+      ],
+      "theory": [
+        "A spanning tree reaches every node with no cycles; a graph with n nodes always needs exactly n − 1 edges for it.",
+        "Kruskal's algorithm sorts the edges by weight and adds each one unless it would close a cycle (checked with a union–find structure). Prim's algorithm grows one tree from a single node, always taking the cheapest edge that leaves it.",
+        "Both are correct thanks to the cut property: for any split of the nodes into two groups, the lightest edge crossing the split belongs to some minimum spanning tree. It is the classic model for building the cheapest network of cables, pipes or roads."
+      ],
+      "link": "https://en.wikipedia.org/wiki/Minimum_spanning_tree",
+      "info": "Edges {count}/{needed}",
+      "stat": "Weight: {weight}",
+      "won": "Minimum spanning tree!",
+      "lost": "Not minimal",
+      "wonDetail": "Total weight {weight}: optimal.",
+      "lostDetail": "Your tree weighs {weight} · minimum {best}. Green edges show an optimal tree.",
+      "notTree": "These edges are not a tree (there is a cycle or a node is left out). Minimum weight: {best}."
+    },
+    "coloring": {
+      "name": "Graph colouring",
+      "short": "Chromatic number",
+      "tagline": "Colour the nodes so neighbours never match, with as few colours as possible.",
+      "rules": [
+        "Click a node to colour it; click again to switch colour (after the last one it goes back to blank).",
+        "Two nodes joined by an edge must have different colours: conflicting edges turn red.",
+        "Colour every node, then submit. You win with no conflicts and the minimum number of colours."
+      ],
+      "theory": [
+        "The minimum number of colours needed is the chromatic number χ(G). A graph with χ ≤ 2 is bipartite: it has no cycle of odd length.",
+        "Deciding whether χ ≤ 3 is NP-complete, so no fast algorithm is known for big graphs. With a handful of nodes, trying every possibility (backtracking) is fine, and that is how this game checks you.",
+        "The four colour theorem (1976, one of the first computer-assisted proofs) says every planar map needs at most 4 colours. Colouring models scheduling too: exams that share students cannot go in the same slot."
+      ],
+      "link": "https://en.wikipedia.org/wiki/Graph_coloring",
+      "info": "Neighbours must differ",
+      "stat": "Colours {used} · conflicts {conflicts}",
+      "won": "Optimal colouring!",
+      "lost": "Not optimal",
+      "wonDetail": "{used} colours: that is the chromatic number.",
+      "lostDetail": "You used {used} colours; {best} are enough.",
+      "conflictDetail": "{count, plural, one {# edge joins} other {# edges join}} same-coloured nodes. Minimum: {best} colours."
+    },
+    "bfs": {
+      "name": "Breadth-first search",
+      "short": "BFS",
+      "tagline": "Predict the order in which BFS visits the nodes.",
+      "rules": [
+        "The visit starts from node A, already selected.",
+        "Click the other nodes in the order a breadth-first search visits them.",
+        "When a node has several unvisited neighbours, BFS takes them in alphabetical order.",
+        "Submit when every node is in the list: you win if the order is exactly right."
+      ],
+      "theory": [
+        "Breadth-first search explores a graph in waves: first the start node, then all its neighbours, then their neighbours, and so on.",
+        "It uses a queue (first in, first out): take the node at the front and append its unvisited neighbours to the back. Swap the queue for a stack and you get depth-first search (DFS), which dives as deep as possible first.",
+        "On graphs without weights BFS finds the path with the fewest edges to every node, in O(V + E) time. Web crawlers, the degrees of separation in social networks and puzzle solvers all use it."
+      ],
+      "link": "https://en.wikipedia.org/wiki/Breadth-first_search",
+      "info": "Start from {src}",
+      "stat": "{count}/{total} nodes",
+      "won": "Correct order!",
+      "lost": "Wrong order",
+      "wonDetail": "That is exactly how BFS explores this graph.",
+      "lostDetail": "BFS order: {order}"
+    }
+  },
+  "game-shell": {
+    "undo": "Undo",
+    "reset": "Reset",
+    "submit": "Submit",
+    "retry": "Retry",
+    "newGame": "New game",
+    "seed": "Seed"
+  },
+  "explainer": {
+    "open": "Rules",
+    "rules": "How to play",
+    "theory": "A bit of theory",
+    "readMore": "Read more on Wikipedia",
+    "start": "Let's play"
+  },
+  "play": {
+    "modes": "Game modes",
+    "mode": {
+      "daily": "Daily",
+      "practice": "Practice",
+      "timed": "Timed",
+      "challenge": "Challenge"
+    },
+    "daily": {
+      "number": "Daily #{number}",
+      "done": "Today: {result} {score}",
+      "share": "Share result",
+      "otherGames": "Other games",
+      "shareText": "Graphle #{number} · {game}\n{emoji} {result} {score}\n{url}"
+    },
+    "practice": {
+      "hint": "Unlimited random graphs."
+    },
+    "timed": {
+      "solved": "Solved",
+      "over": "Time's up!",
+      "result": "{solved, plural, one {# puzzle solved} other {# puzzles solved}}",
+      "again": "Play again"
+    },
+    "challenge": {
+      "hint": "Send this exact graph to a friend.",
+      "share": "Copy challenge link",
+      "shareText": "Can you beat me at Graphle ({game})? {url}"
+    },
+    "shareState": {
+      "shared": "Shared!",
+      "copied": "Copied to the clipboard",
+      "failed": "Could not share"
+    }
+  },
+  "error-page": {
+    "title": "Something went wrong",
+    "retry": "Try again"
+  }
 }

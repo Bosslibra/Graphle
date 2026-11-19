@@ -8,7 +8,7 @@ import { ControlsDrawer } from "@/components/layout/controls-drawer";
 import { Fraunces, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import GraphBackground from "@/components/layout/graph-background";
 
@@ -17,10 +17,25 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
 
-export const metadata: Metadata = {
-  title: "Graphle",
-  description: "Daily puzzle game about graph theory",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "home-page" });
+  const description = t("game-subtitle");
+
+  return {
+    // Set NEXT_PUBLIC_SITE_URL in production so share/OG links are absolute.
+    metadataBase: process.env.NEXT_PUBLIC_SITE_URL ? new URL(process.env.NEXT_PUBLIC_SITE_URL) : undefined,
+    title: { default: "Graphle", template: "%s · Graphle" },
+    description,
+    applicationName: "Graphle",
+    openGraph: { title: "Graphle", description, siteName: "Graphle", type: "website", locale },
+    twitter: { card: "summary", title: "Graphle", description },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

@@ -1,53 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { msUntilNextDaily } from "@/lib/graph/random";
 
+function format(ms: number) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60]
+    .map((v) => String(v).padStart(2, "0"))
+    .join(":");
+}
+
+/** Time left until the daily puzzles change (midnight UTC, same moment for everyone). */
 export default function CountdownTimer() {
-  const [countdown, setCountdown] = useState<string>("--:--:--");
-  const isMounted = useRef(false);
+  const [countdown, setCountdown] = useState<string | null>(null);
 
   useEffect(() => {
-    isMounted.current = true;
-    
-    const updateCountdown = () => {
-      const now = new Date();
-      const midnight = new Date(now);
-      midnight.setHours(24, 0, 0, 0);
-      
-      const msLeft = midnight.getTime() - now.getTime();
-      const s = Math.max(0, Math.floor(msLeft / 1000));
-      
-      const formatted = [
-        Math.floor(s / 3600), 
-        Math.floor((s % 3600) / 60), 
-        s % 60
-      ]
-        .map((v) => String(v).padStart(2, "0"))
-        .join(":");
-
-      setCountdown(formatted);
-    };
-
-    updateCountdown();
-    const id = setInterval(updateCountdown, 1000);
-
-    // Ensure timer un-freezes if restored from browser's Back/Forward cache
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        updateCountdown();
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-    
+    const tick = () => setCountdown(format(msUntilNextDaily()));
+    const id = setInterval(tick, 1000);
+    const first = setTimeout(tick, 0);
+    // Un-freeze when restored from the back/forward cache or a background tab
+    const onVisible = () => document.visibilityState === "visible" && tick();
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       clearInterval(id);
-      document.removeEventListener("visibilitychange", handleVisibility);
+      clearTimeout(first);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 
   return (
-    <span suppressHydrationWarning className="font-mono font-medium text-foreground tabular-nums">
-      {isMounted ? countdown : "--:--:--"}
-    </span>
+    <span className="font-mono font-medium tabular-nums text-foreground">{countdown ?? "--:--:--"}</span>
   );
 }

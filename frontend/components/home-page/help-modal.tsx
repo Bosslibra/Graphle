@@ -10,7 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Dumbbell, HelpCircle, Hourglass, ClockFading, Swords } from "lucide-react";
+import { CalendarDays, ClockFading, Dumbbell, HelpCircle, Swords } from "lucide-react";
+import { MODES } from "@/components/game/games/registry";
+
+const ICONS = { daily: CalendarDays, practice: Dumbbell, timed: ClockFading, challenge: Swords };
 
 export default function HelpModal() {
   const t = useTranslations("home-page.help-modal");
@@ -28,22 +31,18 @@ export default function HelpModal() {
           <DialogDescription>{t("how-to-play-description")}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 text-sm text-muted-foreground">
-          <div className="flex flex-col gap-1">
-            <span className="font-medium text-foreground"><Hourglass className="h-4 w-4 inline-block mr-1" />{t("mode-daily")}</span>
-            <p>{t("mode-daily-desc")}</p>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="font-medium text-foreground"><Dumbbell className="h-4 w-4 inline-block mr-1" />{t("mode-practice")}</span>
-            <p>{t("mode-practice-desc")}</p>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="font-medium text-foreground"><ClockFading className="h-4 w-4 inline-block mr-1" />{t("mode-timed")}</span>
-            <p>{t("mode-timed-desc")}</p>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="font-medium text-foreground"><Swords className="h-4 w-4 inline-block mr-1" />{t("mode-challenge")}</span>
-            <p>{t("mode-challenge-desc")}</p>
-          </div>
+          {MODES.map((mode) => {
+            const Icon = ICONS[mode];
+            return (
+              <div key={mode} className="flex flex-col gap-1">
+                <span className="flex items-center gap-1.5 font-medium text-foreground">
+                  <Icon className="h-4 w-4" />
+                  {t(`mode-${mode}`)}
+                </span>
+                <p>{t(`mode-${mode}-desc`)}</p>
+              </div>
+            );
+          })}
         </div>
       </DialogContent>
     </Dialog>
