@@ -163,4 +163,6 @@ Games never hardcode colours: everything comes from the active variant, either a
 
 ## Hydration
 
-`SiteSkinProvider` exposes the default skin in light mode until hydration is done, then switches to the stored skin/mode. This keeps server HTML and the first client render identical (no hydration warnings) even though the skin lives in `localStorage`.
+The chosen skin is stored in the `graphle-skin` cookie (`SITE_SKIN_COOKIE`). The root layout reads it, sets `data-skin` on `<html>` and renders the skin's CSS variables for both modes in a `<style id="skin-vars">` in `<head>` (`getSkinStylesheet`: `html:root{…light}` / `html:root.dark{…dark}`). next-themes puts `.dark` on `<html>` before paint, so the first paint already has the right skin and mode: no flash.
+
+`SiteSkinProvider` receives the same id as `initialSkinId`, so server and client markup match. The colour mode is only known in the browser, so JS-read tokens (`useCurrentSkinVariant()`) are the light ones until hydration: anything that differs between modes must therefore be a CSS variable, not a JS value. A `?skin=` link and a skin saved in `localStorage` before the cookie existed are applied after hydration and written to the cookie.

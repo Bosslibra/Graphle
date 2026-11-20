@@ -11,6 +11,15 @@ import { cn } from "@/lib/utils";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import GraphBackground from "@/components/layout/graph-background";
+import { cookies } from "next/headers";
+import {
+  DEFAULT_SITE_SKIN_ID,
+  getSiteSkin,
+  getSkinStylesheet,
+  getSkinVariant,
+  normalizeSiteSkinId,
+  SITE_SKIN_COOKIE,
+} from "@/lib/skins";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
@@ -56,6 +65,11 @@ export default async function RootLayout({
 
   setRequestLocale(locale);
 
+  // The chosen skin lives in a cookie so the server can render its colours (no flash on load).
+  const skinId = normalizeSiteSkinId((await cookies()).get(SITE_SKIN_COOKIE)?.value) ?? DEFAULT_SITE_SKIN_ID;
+  const skin = getSiteSkin(skinId);
+  const skinCss = getSkinStylesheet(getSkinVariant(skin, "light"), getSkinVariant(skin, "dark"));
+
   return (
     <html
       lang={locale}
@@ -68,8 +82,12 @@ export default async function RootLayout({
         jetbrainsMono.variable,
         "font-sans",
       )}
+      data-skin={skinId}
       suppressHydrationWarning
     >
+      <head>
+        <style id="skin-vars" dangerouslySetInnerHTML={{ __html: skinCss }} />
+      </head>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
           <ThemeProvider
@@ -78,7 +96,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SiteSkinProvider>
+            <SiteSkinProvider initialSkinId={skinId}>
               <TooltipProvider>
                 {/* Site-wide graph background */}
                 <GraphBackground />

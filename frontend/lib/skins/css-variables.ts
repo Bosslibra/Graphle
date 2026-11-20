@@ -1,1 +1,1 @@
-export { getSkinCssVariables } from "@/lib/themes/css-variables";
+export { getSkinCssVariables, getSkinStylesheet } from "@/lib/themes/css-variables";

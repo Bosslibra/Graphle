@@ -95,3 +95,19 @@ export function getSkinCssVariables(variant: SkinVariant): Record<string, string
       : "none",
   };
 }
+
+function declarations(variables: Record<string, string>): string {
+  // Values come from the registry (trusted); strip "<" anyway so they can never close the <style> tag.
+  return Object.entries(variables)
+    .map(([name, value]) => `${name}:${value.replace(/</g, "")};`)
+    .join("");
+}
+
+/**
+ * CSS for one skin in both colour modes, rendered by the server in <head>.
+ * next-themes sets `.dark` on <html> before paint, so the right mode applies immediately.
+ * `html:root` beats the plain `:root` / `.dark` fallbacks in globals.css regardless of order.
+ */
+export function getSkinStylesheet(light: SkinVariant, dark: SkinVariant): string {
+  return `html:root{${declarations(getSkinCssVariables(light))}}html:root.dark{${declarations(getSkinCssVariables(dark))}}`;
+}

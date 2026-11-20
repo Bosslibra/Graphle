@@ -194,6 +194,8 @@ const graphOverlayCircuit = svgToDataUri(`
 
 export const DEFAULT_SITE_SKIN_ID: SiteSkinId = "default";
 export const SITE_SKIN_STORAGE_KEY = "graphle-site-skin";
+/** Cookie read by the root layout so the server renders the chosen skin (no flash). */
+export const SITE_SKIN_COOKIE = "graphle-skin";
 
 const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
   default: {
@@ -738,11 +740,11 @@ export function normalizeSiteSkinId(value: string | null | undefined): SiteSkinI
     return undefined;
   }
 
-  if (value in siteSkinRegistry) {
+  if (Object.hasOwn(siteSkinRegistry, value)) {
     return value as SiteSkinId;
   }
 
-  return SKIN_ALIASES[value];
+  return Object.hasOwn(SKIN_ALIASES, value) ? SKIN_ALIASES[value] : undefined;
 }
 
 export function isSiteSkinId(value: string): value is SiteSkinId {

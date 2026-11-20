@@ -12,11 +12,11 @@ import {
 } from "react";
 import { useTheme } from "next-themes";
 import {
-  DEFAULT_SITE_SKIN_ID,
   getSiteSkin,
   getSkinVariant,
   normalizeSiteSkinId,
   applySkinVariant,
+  SITE_SKIN_COOKIE,
   SITE_SKIN_STORAGE_KEY,
   siteSkinOptions,
   type ColorMode,
@@ -37,19 +37,22 @@ interface SiteSkinContextValue {
 
 const SiteSkinContext = createContext<SiteSkinContextValue | undefined>(undefined);
 
-function readSkinFromUrl(): SiteSkinId | undefined {
-  if (typeof window === "undefined") {
-    return undefined;
-  }
+const ONE_YEAR = 60 * 60 * 24 * 365;
 
-  const urlValue = new URLSearchParams(window.location.search).get("skin");
-  return normalizeSiteSkinId(urlValue);
+function readSkinFromUrl(): SiteSkinId | undefined {
+  return normalizeSiteSkinId(new URLSearchParams(window.location.search).get("skin"));
 }
 
 function syncSkinInUrl(skinId: SiteSkinId) {
   const url = new URL(window.location.href);
   url.searchParams.set("skin", skinId);
   window.history.replaceState(window.history.state, "", url.toString());
+}
+
+function persistSkin(skinId: SiteSkinId) {
+  document.cookie = `${SITE_SKIN_COOKIE}=${skinId}; path=/; max-age=${ONE_YEAR}; samesite=lax`;
+  // localStorage is kept only to sync other open tabs (storage event).
+  localStorage.setItem(SITE_SKIN_STORAGE_KEY, skinId);
 }
 
 const noopSubscribe = () => () => {};
@@ -59,35 +62,41 @@ function useHydrated(): boolean {
   return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
 
-export function SiteSkinProvider({ children }: { children: ReactNode }) {
-  // Until hydration is done, expose exactly what the server rendered (default skin, light mode);
-  // otherwise skin-dependent markup (e.g. graph colours) would not match and React would warn.
+/**
+ * `initialSkinId` comes from the skin cookie, read by the root layout. The server renders that
+ * skin's CSS, so the first paint is already correct and server/client markup match.
+ */
+export function SiteSkinProvider({
+  children,
+  initialSkinId,
+}: {
+  children: ReactNode;
+  initialSkinId: SiteSkinId;
+}) {
   const hydrated = useHydrated();
   const { resolvedTheme, setTheme } = useTheme();
-  const [skinId, setSkinId] = useState<SiteSkinId>(() => {
-    if (typeof window === "undefined") {
-      return DEFAULT_SITE_SKIN_ID;
-    }
-
-    const fromUrl = readSkinFromUrl();
-    if (fromUrl) {
-      return fromUrl;
-    }
-
-    const storedSkin = normalizeSiteSkinId(localStorage.getItem(SITE_SKIN_STORAGE_KEY));
-    if (storedSkin) {
-      return storedSkin;
-    }
-
-    return DEFAULT_SITE_SKIN_ID;
-  });
+  const [skinId, setSkinId] = useState<SiteSkinId>(initialSkinId);
 
   const setSkin = useCallback((nextSkinId: SiteSkinId) => {
     setSkinId(nextSkinId);
+    persistSkin(nextSkinId);
   }, []);
 
+  // After hydration: a ?skin= link wins; otherwise migrate a skin saved before the cookie existed.
   useEffect(() => {
-    localStorage.setItem(SITE_SKIN_STORAGE_KEY, skinId);
+    const preferred =
+      readSkinFromUrl() ??
+      (document.cookie.includes(`${SITE_SKIN_COOKIE}=`)
+        ? undefined
+        : normalizeSiteSkinId(localStorage.getItem(SITE_SKIN_STORAGE_KEY)));
+    if (preferred && preferred !== initialSkinId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off sync with browser-only state
+      setSkinId(preferred);
+    }
+    persistSkin(preferred ?? initialSkinId);
+  }, [initialSkinId]);
+
+  useEffect(() => {
     syncSkinInUrl(skinId);
   }, [skinId]);
 
@@ -107,8 +116,8 @@ export function SiteSkinProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  const effectiveSkinId = hydrated ? skinId : DEFAULT_SITE_SKIN_ID;
-  const skin = useMemo(() => getSiteSkin(effectiveSkinId), [effectiveSkinId]);
+  const skin = useMemo(() => getSiteSkin(skinId), [skinId]);
+  // The colour mode is only known in the browser (system preference), so stay "light" until hydrated.
   const currentMode: ColorMode = hydrated && resolvedTheme === "dark" ? "dark" : "light";
   const currentVariant = useMemo(() => getSkinVariant(skin, currentMode), [currentMode, skin]);
 
@@ -125,7 +134,7 @@ export function SiteSkinProvider({ children }: { children: ReactNode }) {
 
   const contextValue = useMemo<SiteSkinContextValue>(
     () => ({
-      currentSkinId: effectiveSkinId,
+      currentSkinId: skinId,
       currentSkin: skin,
       currentMode,
       currentVariant,
@@ -133,7 +142,7 @@ export function SiteSkinProvider({ children }: { children: ReactNode }) {
       setSkin,
       setMode,
     }),
-    [currentMode, currentVariant, effectiveSkinId, setMode, setSkin, skin],
+    [currentMode, currentVariant, skinId, setMode, setSkin, skin],
   );
 
   return <SiteSkinContext.Provider value={contextValue}>{children}</SiteSkinContext.Provider>;
