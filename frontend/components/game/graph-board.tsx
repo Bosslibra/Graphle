@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Graph, GraphEdge } from "@/lib/graph/types";
 import { useCurrentSkinVariant } from "@/contexts/site-skin-context";
+import { circleLayout, layoutEdgeLabels } from "@/lib/graph/layout";
+import { BeadFlare, EdgeWeight } from "@/components/game/edge-label";
 
 const NODE_RADIUS = 24;
 const SVG_SIZE = 330;
@@ -37,17 +39,6 @@ export interface GraphBoardProps {
   ariaLabel?: string;
 }
 
-function circleLayout(graph: Graph) {
-  const c = SVG_SIZE / 2;
-  const r = SVG_SIZE * 0.36;
-  const positions: Record<string, { x: number; y: number }> = {};
-  graph.nodes.forEach((node, i) => {
-    const angle = (2 * Math.PI * i) / graph.nodes.length - Math.PI / 2;
-    positions[node.id] = { x: c + r * Math.cos(angle), y: c + r * Math.sin(angle) };
-  });
-  return positions;
-}
-
 const STATUS_STROKE: Partial<Record<EdgeVisual, string>> = {
   correct: "var(--graph-result-win-fg)",
   wrong: "var(--graph-result-loss-fg)",
@@ -70,8 +61,13 @@ export default function GraphBoard({
   ariaLabel,
 }: GraphBoardProps) {
   const theme = useCurrentSkinVariant().graph;
+  const labelStyle = theme.edge.labelStyle;
   const variant = useCurrentSkinVariant();
-  const positions = useMemo(() => circleLayout(graph), [graph]);
+  const positions = useMemo(() => circleLayout(graph, SVG_SIZE), [graph]);
+  const labels = useMemo(
+    () => layoutEdgeLabels(positions, graph.edges, { nodeRadius: NODE_RADIUS }),
+    [positions, graph.edges],
+  );
 
   // Hue of each node: interpolated by distance between hueStart and hueEnd,
   // or by position around the circle when no anchors are given.
@@ -86,7 +82,8 @@ export default function GraphBoard({
         const dE = Math.hypot(p.x - positions[hueEnd].x, p.y - positions[hueEnd].y);
         ratio = dS + dE === 0 ? 0 : dS / (dS + dE);
       }
-      out[node.id] = start + (end - start) * ratio;
+      // Rounded: server and browser trig may differ in the last bits (hydration mismatch).
+      out[node.id] = Math.round((start + (end - start) * ratio) * 100) / 100;
     });
     return out;
   }, [graph.nodes, positions, hueStart, hueEnd, theme.hues]);
@@ -107,7 +104,14 @@ export default function GraphBoard({
         }}
       >
         <style>{`@keyframes drawEdge { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-          .gb-node:focus-visible .gb-focus { stroke: var(--ring); }`}</style>
+          .gb-node:focus-visible .gb-focus { stroke: var(--ring); }
+          @keyframes beadIn { from { opacity: 0; } to { opacity: 1; } }
+          .gb-edge, .gb-stroke, .gb-line { transition: opacity 0.15s ease, stroke-width 0.15s ease; }
+          @media (hover: hover) {
+            .gb-edges:has(.gb-edge:hover) .gb-edge:not(:hover) { opacity: 0.3 !important; }
+            .gb-edge:hover .gb-stroke { opacity: 1; }
+            .gb-edge:hover .gb-line { stroke-width: 4.5px; }
+          }`}</style>
         <svg
           viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
           className="h-full w-full select-none touch-manipulation"
@@ -129,8 +133,10 @@ export default function GraphBoard({
                   y2={positions[b].y}
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop offset="0%" stopColor={color(hues[a])} />
-                  <stop offset="100%" stopColor={color(hues[b])} />
+                  {/* Several stops so the blend follows the OKLCH hue (SVG would mix in sRGB and go grey). */}
+                  {[0, 0.25, 0.5, 0.75, 1].map((k) => (
+                    <stop key={k} offset={k} stopColor={color(hues[a] + (hues[b] - hues[a]) * k)} />
+                  ))}
                 </linearGradient>
               )),
             )}
@@ -148,6 +154,7 @@ export default function GraphBoard({
             />
           )}
 
+          <g className="gb-edges">
           {graph.edges.map((edge) => {
             const visual = edgeVisual?.(edge) ?? "idle";
             const lit = visual === "active" || visual === "correct" || visual === "wrong";
@@ -156,64 +163,75 @@ export default function GraphBoard({
             const to = positions[dir?.to ?? edge.target];
             const gradient = `url(#grad-${edge.id}-${dir && dir.from !== edge.source ? "r" : "f"})`;
             const stroke = STATUS_STROKE[visual] ?? (lit ? gradient : theme.edge.inactiveStroke);
-            const mx = (from.x + to.x) / 2;
-            const my = (from.y + to.y) / 2;
-            const labelFill =
+            const label = labels[edge.id];
+            const lineWidth = lit ? theme.edge.activeStrokeWidth : theme.edge.inactiveStrokeWidth;
+            // Solid colour of the line where the label sits (the gradient sampled at the label).
+            const lineColor =
               STATUS_STROKE[visual] ??
-              (lit ? color((hues[edge.source] + hues[edge.target]) / 2) : theme.edge.inactiveLabelFill);
+              (lit
+                ? color(hues[edge.source] + (hues[edge.target] - hues[edge.source]) * label.t)
+                : theme.edge.inactiveStroke);
+            const bead = showWeights && labelStyle === "bead";
+            // While a lit edge is being drawn, the bead appears when the stroke reaches it.
+            const reach = dir && dir.from !== edge.source ? 1 - label.t : label.t;
 
             return (
               <g
                 key={edge.id}
                 onClick={onEdgeClick ? () => onEdgeClick(edge) : undefined}
-                className={cn(onEdgeClick && "cursor-pointer")}
+                className={cn("gb-edge", onEdgeClick && "cursor-pointer")}
                 style={{ opacity: visual === "dimmed" ? 0.35 : 1 }}
               >
                 {onEdgeClick && (
                   <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="transparent" strokeWidth={18} />
                 )}
-                <line
-                  key={`${edge.id}-${visual}`}
-                  x1={from.x}
-                  y1={from.y}
-                  x2={to.x}
-                  y2={to.y}
-                  pathLength={1}
-                  strokeWidth={lit ? theme.edge.activeStrokeWidth : theme.edge.inactiveStrokeWidth}
-                  stroke={stroke}
-                  strokeLinecap="round"
-                  style={{
-                    opacity: lit ? 1 : theme.edge.inactiveOpacity,
-                    strokeDasharray: lit ? 1 : undefined,
-                    animation: lit ? `drawEdge ${theme.edge.drawDurationMs}ms ease-out forwards` : undefined,
-                  }}
-                />
-                {showWeights && (<>
-                <rect
-                  x={mx - 12}
-                  y={my - 10}
-                  width={24}
-                  height={19}
-                  rx={5}
-                  fill={labelFill}
-                  stroke={lit ? "transparent" : theme.edge.inactiveLabelStroke}
-                  strokeWidth={1}
-                />
-                <text
-                  x={mx}
-                  y={my + 4.5}
-                  textAnchor="middle"
-                  fontSize={theme.edge.labelFontSize + 1}
-                  fontWeight={lit ? 700 : 500}
-                  fill={lit ? theme.edge.activeLabelText : theme.edge.inactiveLabelText}
-                  fontFamily="var(--font-mono)"
-                >
-                  {edge.weight}
-                </text>
-                </>)}
+                {/* Line and bead flare share one opacity, so where they overlap it is not darker. */}
+                <g className="gb-stroke" opacity={lit ? 1 : theme.edge.inactiveOpacity}>
+                  <line
+                    key={`${edge.id}-${visual}`}
+                    x1={from.x}
+                    y1={from.y}
+                    x2={to.x}
+                    y2={to.y}
+                    className="gb-line"
+                    pathLength={1}
+                    strokeWidth={lineWidth}
+                    stroke={stroke}
+                    strokeLinecap="round"
+                    style={{
+                      strokeDasharray: lit ? 1 : undefined,
+                      animation: lit ? `drawEdge ${theme.edge.drawDurationMs}ms ease-out forwards` : undefined,
+                    }}
+                  />
+                  {bead && (
+                    <BeadFlare
+                      key={`${edge.id}-${visual}-bead`}
+                      placement={label}
+                      lineWidth={lineWidth}
+                      color={lineColor}
+                      delayMs={lit ? Math.round(theme.edge.drawDurationMs * reach * 0.8) : undefined}
+                    />
+                  )}
+                </g>
+                {showWeights && (
+                  <EdgeWeight
+                    variant={labelStyle}
+                    placement={label}
+                    weight={edge.weight}
+                    lit={lit}
+                    fontSize={theme.edge.labelFontSize + 1}
+                    colors={{
+                      line: lineColor,
+                      fill: lit ? lineColor : theme.edge.inactiveLabelFill,
+                      stroke: lit ? "transparent" : theme.edge.inactiveLabelStroke,
+                      text: lit ? theme.edge.activeLabelText : theme.edge.inactiveLabelText,
+                    }}
+                  />
+                )}
               </g>
             );
           })}
+          </g>
 
           {graph.nodes.map((node) => {
             const pos = positions[node.id];

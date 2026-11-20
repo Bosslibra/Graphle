@@ -68,6 +68,8 @@ export interface SkinTypographyTokens {
   baseFontSize: string;
 }
 
+export type EdgeLabelStyle = "bead" | "pill";
+
 export interface SkinGraphTokens {
   hues: {
     start: number;
@@ -95,6 +97,8 @@ export interface SkinGraphTokens {
     inactiveLabelStroke: string;
     inactiveLabelText: string;
     labelFontSize: number;
+    /** Shape of the weight label: "bead" (the line flares into a circle) or "pill" (rotated capsule). */
+    labelStyle: EdgeLabelStyle;
   };
   boardBackground: string;
   pathChip: {
