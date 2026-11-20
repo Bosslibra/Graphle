@@ -145,6 +145,7 @@ Games never hardcode colours: everything comes from the active variant, either a
 | Token (`graph.*`) | CSS variable | Used for |
 |---|---|---|
 | `hues.start/end`, `node.*`, `edge.*` | (JS) | Node and edge colours on the board |
+| `edge.labelStyle` | (JS) | Weight label shape: `"bead"` (the line flares into a circle) or `"pill"` (capsule rotated along the edge). Optional: defaults to `DEFAULT_EDGE_LABEL_STYLE` in `lib/themes/registry.ts` |
 | `node.activeText` | `--graph-node-text` | Text on coloured nodes and palette swatches |
 | `palette` (≥ 5 colours) | `--graph-palette-1…5` | Colouring game (colours must be clearly distinct; numbers are shown too) |
 | `pathChip.*` | `--graph-path-chip-*` | Chips under the board and node badges |
@@ -152,6 +153,8 @@ Games never hardcode colours: everything comes from the active variant, either a
 | `surfaces.graphBackground` | `--graphle-graph-bg` | Board background |
 | `surfaces.surfaceBackground` | `--graphle-surface-bg` | Game card, home tiles |
 | `surfaces.mutedBackground` | `--graphle-muted-bg` | Header, mode tabs |
+
+Weight labels are placed by `layoutEdgeLabels` (`lib/graph/layout.ts`): each one slides along its own edge away from crossings, other labels and nodes, so labels of edges crossing at the same point never stack.
 
 `result` (and `assets`) can be one value for both modes or `{ light, dark }`; give dark mode its own values whenever the foreground would be too dark on a dark background.
 

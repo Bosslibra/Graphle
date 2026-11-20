@@ -10,6 +10,7 @@ import {
 } from "@/lib/graph/algorithms";
 import { generateShortestPathPuzzle, MIN_PATH_NODES } from "@/lib/graph/puzzles";
 import { findEdge } from "@/lib/graph/types";
+import { circleLayout, layoutEdgeLabels } from "@/lib/graph/layout";
 import { Graph } from "@/lib/graph/types";
 import { computeStreak } from "@/lib/progress";
 
@@ -184,5 +185,38 @@ describe("streak", () => {
   test("breaks on a gap", () => {
     expect(computeStreak(["2026-03-06", "2026-03-08"], today)).toBe(0);
     expect(computeStreak([], today)).toBe(0);
+  });
+});
+
+describe("edge label layout", () => {
+  const minLabelDistance = (g: ReturnType<typeof generateGraph>) => {
+    const pos = circleLayout(g, 330);
+    const labels = Object.values(layoutEdgeLabels(pos, g.edges, { nodeRadius: 24 }));
+    let min = Infinity;
+    labels.forEach((a, i) => labels.slice(i + 1).forEach((b) => (min = Math.min(min, Math.hypot(a.x - b.x, a.y - b.y)))));
+    return min;
+  };
+
+  it("never stacks labels of edges that cross at the centre", () => {
+    // 6 nodes on a circle: the three diameters share the same midpoint.
+    for (let i = 0; i < 300; i++) expect(minLabelDistance(generateGraph(`mst-${i}`, { nodes: 6 }))).toBeGreaterThan(26);
+  });
+
+  it("keeps shortest-path labels apart", () => {
+    for (let i = 0; i < 300; i++) expect(minLabelDistance(generateShortestPathPuzzle(`sp-${i}`))).toBeGreaterThan(20);
+  });
+
+  it("keeps each label on its own edge, upright", () => {
+    const g = generateShortestPathPuzzle("labels");
+    const pos = circleLayout(g, 330);
+    const labels = layoutEdgeLabels(pos, g.edges, { nodeRadius: 24 });
+    for (const e of g.edges) {
+      const { x, y, angle } = labels[e.id];
+      const a = pos[e.source], b = pos[e.target];
+      const cross = (b.x - a.x) * (y - a.y) - (b.y - a.y) * (x - a.x);
+      expect(Math.abs(cross) / Math.hypot(b.x - a.x, b.y - a.y)).toBeLessThan(0.5);
+      expect(angle).toBeGreaterThan(-90);
+      expect(angle).toBeLessThanOrEqual(90);
+    }
   });
 });

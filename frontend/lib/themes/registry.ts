@@ -1,5 +1,6 @@
 import {
   type ColorMode,
+  type EdgeLabelStyle,
   type ShadcnColorTokens,
   type SiteSkin,
   type SiteSkinId,
@@ -14,7 +15,8 @@ interface LegacyGraphTokens {
   hues: SkinGraphTokens["hues"];
   palette: SkinGraphTokens["palette"];
   node: SkinGraphTokens["node"];
-  edge: SkinGraphTokens["edge"];
+  /** `labelStyle` is optional: skins without it use DEFAULT_EDGE_LABEL_STYLE. */
+  edge: Omit<SkinGraphTokens["edge"], "labelStyle"> & { labelStyle?: EdgeLabelStyle };
   boardBackground: Record<ColorMode, string>;
   pathChip: SkinGraphTokens["pathChip"];
   /** Win/loss colours; may differ per mode (dark text on dark backgrounds is unreadable). */
@@ -75,7 +77,7 @@ function toSkinVariant(legacy: LegacySkin, mode: ColorMode): SkinVariant {
       hues: legacy.graph.hues,
       palette: legacy.graph.palette,
       node: legacy.graph.node,
-      edge: legacy.graph.edge,
+      edge: { ...legacy.graph.edge, labelStyle: legacy.graph.edge.labelStyle ?? DEFAULT_EDGE_LABEL_STYLE },
       boardBackground: graphBackground,
       pathChip: legacy.graph.pathChip,
       backdrop: {
@@ -191,6 +193,12 @@ const graphOverlayCircuit = svgToDataUri(`
   </g>
 </svg>
 `);
+
+/**
+ * Weight label shape for every skin that does not set its own `graph.edge.labelStyle`.
+ * "bead": the edge line flares into a circle holding the weight. "pill": previous rotated capsule.
+ */
+export const DEFAULT_EDGE_LABEL_STYLE: EdgeLabelStyle = "bead";
 
 export const DEFAULT_SITE_SKIN_ID: SiteSkinId = "default";
 export const SITE_SKIN_STORAGE_KEY = "graphle-site-skin";
