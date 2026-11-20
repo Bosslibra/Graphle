@@ -56,7 +56,8 @@
       "mode-timed-desc": "Solve as many graphs as you can in 2 minutes.",
       "mode-challenge": "Challenge",
       "mode-challenge-desc": "Share a link: your friend gets exactly the same graph."
-    }
+    },
+    "play": "Play"
   },
   "games": {
     "shortest-path": {
@@ -126,7 +127,8 @@
       "lost": "Not optimal",
       "wonDetail": "{used} colours: that is the chromatic number.",
       "lostDetail": "You used {used} colours; {best} are enough.",
-      "conflictDetail": "{count, plural, one {# edge joins} other {# edges join}} same-coloured nodes. Minimum: {best} colours."
+      "conflictDetail": "{count, plural, one {# edge joins} other {# edges join}} same-coloured nodes. Minimum: {best} colours.",
+      "colorN": "Colour {n}"
     },
     "bfs": {
       "name": "Breadth-first search",
@@ -179,11 +181,7 @@
       "number": "Daily #{number}",
       "done": "Today: {result} {score}",
       "share": "Share result",
-      "otherGames": "Other games",
       "shareText": "Graphle #{number} · {game}\n{emoji} {result} {score}\n{url}"
-    },
-    "practice": {
-      "hint": "Unlimited random graphs."
     },
     "timed": {
       "solved": "Solved",
@@ -194,7 +192,8 @@
     "challenge": {
       "hint": "Send this exact graph to a friend.",
       "share": "Copy challenge link",
-      "shareText": "Can you beat me at Graphle ({game})? {url}"
+      "shareText": "Can you beat me at Graphle ({game})? {url}",
+      "seed": "Seed"
     },
     "shareState": {
       "shared": "Shared!",

@@ -65,10 +65,9 @@ export default function ShortestPathGame({ graph, onComplete, onNewGame }: GameP
       canSubmit={arrived}
       onSubmit={submit}
       onNewGame={onNewGame}
-      seed={graph.seed}
       footer={path.map((id, i) => (
         <Fragment key={i}>
-          {i > 0 && <ChevronRight className="h-3 w-3 text-muted-foreground" />}
+          {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground" />}
           <NodeChip id={id} />
         </Fragment>
       ))}

@@ -33,7 +33,7 @@ export default function GameExplainer({ gameId }: { gameId: string }) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5 rounded-xl">
+        <Button variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 rounded-lg">
           <BookOpen className="h-4 w-4" />
           {tc("open")}
         </Button>

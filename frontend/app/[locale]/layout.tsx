@@ -4,7 +4,7 @@ import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { ThemeProvider } from "@/components/switches/theme-provider";
 import { SiteSkinProvider } from "@/contexts/site-skin-context";
-import { ControlsDrawer } from "@/components/layout/controls-drawer";
+import SiteHeader from "@/components/layout/site-header";
 import { Fraunces, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -70,7 +70,7 @@ export default async function RootLayout({
       )}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
           <ThemeProvider
             attribute="class"
@@ -83,12 +83,8 @@ export default async function RootLayout({
                 {/* Site-wide graph background */}
                 <GraphBackground />
                 
-                {/* Single entry point for all UI controls */}
-                <div className="fixed left-4 top-4 sm:left-6 sm:top-6 z-50">
-                  <ControlsDrawer />
-                </div>
-
-                {children}
+                <SiteHeader />
+                <main className="relative z-10 flex flex-1 flex-col">{children}</main>
               </TooltipProvider>
             </SiteSkinProvider>
           </ThemeProvider>

@@ -12,11 +12,13 @@ import {
 
 interface LegacyGraphTokens {
   hues: SkinGraphTokens["hues"];
+  palette: SkinGraphTokens["palette"];
   node: SkinGraphTokens["node"];
   edge: SkinGraphTokens["edge"];
   boardBackground: Record<ColorMode, string>;
   pathChip: SkinGraphTokens["pathChip"];
-  result: SkinGraphTokens["result"];
+  /** Win/loss colours; may differ per mode (dark text on dark backgrounds is unreadable). */
+  result: SkinGraphTokens["result"] | Record<ColorMode, SkinGraphTokens["result"]>;
 }
 
 interface LegacySkin {
@@ -45,6 +47,12 @@ function resolveLegacyAssets(
   return assets as SkinAssets;
 }
 
+/** Value shared by both modes, or `{ light, dark }`. */
+function resolveByMode<T extends object>(value: T | Record<ColorMode, T>, mode: ColorMode): T {
+  const perMode = value as Partial<Record<ColorMode, T>>;
+  return perMode.light && perMode.dark ? perMode[mode]! : (value as T);
+}
+
 function toSkinVariant(legacy: LegacySkin, mode: ColorMode): SkinVariant {
   const modeTokens = legacy.modes[mode];
   const graphBackground = legacy.graph.boardBackground[mode];
@@ -65,6 +73,7 @@ function toSkinVariant(legacy: LegacySkin, mode: ColorMode): SkinVariant {
     layout: modeTokens.layout,
     graph: {
       hues: legacy.graph.hues,
+      palette: legacy.graph.palette,
       node: legacy.graph.node,
       edge: legacy.graph.edge,
       boardBackground: graphBackground,
@@ -79,7 +88,7 @@ function toSkinVariant(legacy: LegacySkin, mode: ColorMode): SkinVariant {
         imageOpacity: "0.14",
         imageBlendMode: "screen",
       },
-      result: legacy.graph.result,
+      result: resolveByMode(legacy.graph.result, mode),
     },
     assets: resolveLegacyAssets(legacy.assets, mode),
   };
@@ -295,6 +304,8 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
     },
     graph: {
       hues: { start: 195, end: 330 },
+      // Colouring game: 5 clearly distinct colours, readable in light and dark.
+      palette: ["oklch(0.68 0.19 25)", "oklch(0.64 0.16 255)", "oklch(0.72 0.17 150)", "oklch(0.82 0.16 88)", "oklch(0.62 0.21 315)"],
       node: {
         lightness: 0.62,
         chroma: 0.2,
@@ -326,15 +337,29 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
         border: "oklch(0.64 0.14 250 / 0.6)",
       },
       result: {
-        win: {
-          border: "oklch(0.62 0.17 164 / 0.45)",
-          background: "oklch(0.94 0.05 164 / 0.34)",
-          foreground: "oklch(0.45 0.11 164)",
+        light: {
+          win: {
+            border: "oklch(0.62 0.17 164 / 0.45)",
+            background: "oklch(0.94 0.05 164 / 0.34)",
+            foreground: "oklch(0.45 0.11 164)",
+          },
+          loss: {
+            border: "oklch(0.62 0.19 30 / 0.45)",
+            background: "oklch(0.95 0.05 30 / 0.34)",
+            foreground: "oklch(0.53 0.15 30)",
+          },
         },
-        loss: {
-          border: "oklch(0.62 0.19 30 / 0.45)",
-          background: "oklch(0.95 0.05 30 / 0.34)",
-          foreground: "oklch(0.53 0.15 30)",
+        dark: {
+          win: {
+            border: "oklch(0.7 0.14 164 / 0.5)",
+            background: "oklch(0.55 0.12 164 / 0.18)",
+            foreground: "oklch(0.85 0.13 164)",
+          },
+          loss: {
+            border: "oklch(0.7 0.16 30 / 0.5)",
+            background: "oklch(0.55 0.14 30 / 0.18)",
+            foreground: "oklch(0.82 0.13 30)",
+          },
         },
       },
     },
@@ -456,6 +481,8 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
     },
     graph: {
       hues: { start: 54, end: 145 },
+      // Colouring game: 5 clearly distinct colours, readable in light and dark.
+      palette: ["oklch(0.6 0.14 35)", "oklch(0.58 0.09 200)", "oklch(0.78 0.13 88)", "oklch(0.52 0.1 330)", "oklch(0.64 0.12 135)"],
       node: {
         lightness: 0.66,
         chroma: 0.14,
@@ -487,15 +514,29 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
         border: "oklch(0.62 0.11 58 / 0.55)",
       },
       result: {
-        win: {
-          border: "oklch(0.62 0.13 145 / 0.45)",
-          background: "oklch(0.92 0.06 145 / 0.35)",
-          foreground: "oklch(0.46 0.1 145)",
+        light: {
+          win: {
+            border: "oklch(0.62 0.13 145 / 0.45)",
+            background: "oklch(0.92 0.06 145 / 0.35)",
+            foreground: "oklch(0.46 0.1 145)",
+          },
+          loss: {
+            border: "oklch(0.62 0.16 33 / 0.45)",
+            background: "oklch(0.93 0.05 33 / 0.35)",
+            foreground: "oklch(0.5 0.13 33)",
+          },
         },
-        loss: {
-          border: "oklch(0.62 0.16 33 / 0.45)",
-          background: "oklch(0.93 0.05 33 / 0.35)",
-          foreground: "oklch(0.5 0.13 33)",
+        dark: {
+          win: {
+            border: "oklch(0.7 0.14 145 / 0.5)",
+            background: "oklch(0.55 0.12 145 / 0.18)",
+            foreground: "oklch(0.85 0.13 145)",
+          },
+          loss: {
+            border: "oklch(0.7 0.16 33 / 0.5)",
+            background: "oklch(0.55 0.14 33 / 0.18)",
+            foreground: "oklch(0.82 0.13 33)",
+          },
         },
       },
     },
@@ -613,6 +654,8 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
     },
     graph: {
       hues: { start: 192, end: 142 },
+      // Colouring game: 5 clearly distinct colours, readable in light and dark.
+      palette: ["oklch(0.78 0.14 200)", "oklch(0.68 0.23 345)", "oklch(0.84 0.19 128)", "oklch(0.75 0.17 55)", "oklch(0.62 0.2 290)"],
       node: {
         lightness: 0.64,
         chroma: 0.22,
@@ -644,15 +687,29 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
         border: "oklch(0.63 0.16 196 / 0.55)",
       },
       result: {
-        win: {
-          border: "oklch(0.63 0.15 164 / 0.45)",
-          background: "oklch(0.92 0.06 164 / 0.35)",
-          foreground: "oklch(0.43 0.11 164)",
+        light: {
+          win: {
+            border: "oklch(0.63 0.15 164 / 0.45)",
+            background: "oklch(0.92 0.06 164 / 0.35)",
+            foreground: "oklch(0.43 0.11 164)",
+          },
+          loss: {
+            border: "oklch(0.64 0.19 30 / 0.45)",
+            background: "oklch(0.93 0.06 30 / 0.35)",
+            foreground: "oklch(0.51 0.14 30)",
+          },
         },
-        loss: {
-          border: "oklch(0.64 0.19 30 / 0.45)",
-          background: "oklch(0.93 0.06 30 / 0.35)",
-          foreground: "oklch(0.51 0.14 30)",
+        dark: {
+          win: {
+            border: "oklch(0.7 0.14 164 / 0.5)",
+            background: "oklch(0.55 0.12 164 / 0.18)",
+            foreground: "oklch(0.85 0.13 164)",
+          },
+          loss: {
+            border: "oklch(0.7 0.16 30 / 0.5)",
+            background: "oklch(0.55 0.14 30 / 0.18)",
+            foreground: "oklch(0.82 0.13 30)",
+          },
         },
       },
     },

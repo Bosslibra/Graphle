@@ -74,6 +74,8 @@ export function getSkinCssVariables(variant: SkinVariant): Record<string, string
     "--graph-result-loss-border": graph.result.loss.border,
     "--graph-result-loss-bg": graph.result.loss.background,
     "--graph-result-loss-fg": graph.result.loss.foreground,
+    ...Object.fromEntries(graph.palette.map((color, i) => [`--graph-palette-${i + 1}`, color])),
+    "--graph-node-text": graph.node.activeText,
     "--graph-backdrop-color": graph.backdrop.tint,
     "--graph-backdrop-opacity": graph.backdrop.opacity,
     "--graph-backdrop-edge-width": graph.backdrop.edgeWidth,

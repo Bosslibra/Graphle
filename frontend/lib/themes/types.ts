@@ -73,6 +73,8 @@ export interface SkinGraphTokens {
     start: number;
     end: number;
   };
+  /** Distinct colours used when a game assigns categories to nodes (colouring). At least 5. */
+  palette: string[];
   node: {
     lightness: number;
     chroma: number;

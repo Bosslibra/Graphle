@@ -34,7 +34,7 @@ export function LocaleSwitch() {
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <DropdownMenuContent align="start">
+        <DropdownMenuContent align="end">
           {routing.locales.map((loc) => (
             <DropdownMenuItem
               key={loc}

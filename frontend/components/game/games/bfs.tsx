@@ -53,10 +53,9 @@ export default function BfsGame({ graph, onComplete, onNewGame }: GameProps) {
       canSubmit={remaining.size === 0}
       onSubmit={submit}
       onNewGame={onNewGame}
-      seed={graph.seed}
       footer={order.map((id, i) => (
         <Fragment key={i}>
-          {i > 0 && <ChevronRight className="h-3 w-3 text-muted-foreground" />}
+          {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground" />}
           <NodeChip id={id} />
         </Fragment>
       ))}

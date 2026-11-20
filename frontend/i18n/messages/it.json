@@ -56,7 +56,8 @@
       "mode-timed-desc": "Risolvi più grafi che puoi in 2 minuti.",
       "mode-challenge": "Sfida",
       "mode-challenge-desc": "Condividi un link: il tuo amico riceve esattamente lo stesso grafo."
-    }
+    },
+    "play": "Gioca"
   },
   "games": {
     "shortest-path": {
@@ -126,7 +127,8 @@
       "lost": "Non è ottima",
       "wonDetail": "{used} colori: è il numero cromatico.",
       "lostDetail": "Hai usato {used} colori; ne bastano {best}.",
-      "conflictDetail": "{count, plural, one {# arco collega} other {# archi collegano}} nodi dello stesso colore. Minimo: {best} colori."
+      "conflictDetail": "{count, plural, one {# arco collega} other {# archi collegano}} nodi dello stesso colore. Minimo: {best} colori.",
+      "colorN": "Colore {n}"
     },
     "bfs": {
       "name": "Visita in ampiezza",
@@ -179,11 +181,7 @@
       "number": "Giornaliero #{number}",
       "done": "Oggi: {result} {score}",
       "share": "Condividi risultato",
-      "otherGames": "Altri giochi",
       "shareText": "Graphle #{number} · {game}\n{emoji} {result} {score}\n{url}"
-    },
-    "practice": {
-      "hint": "Grafi casuali illimitati."
     },
     "timed": {
       "solved": "Risolti",
@@ -194,7 +192,8 @@
     "challenge": {
       "hint": "Manda questo grafo esatto a un amico.",
       "share": "Copia link della sfida",
-      "shareText": "Riesci a battermi a Graphle ({game})? {url}"
+      "shareText": "Riesci a battermi a Graphle ({game})? {url}",
+      "seed": "Seed"
     },
     "shareState": {
       "shared": "Condiviso!",

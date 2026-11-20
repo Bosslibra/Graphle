@@ -21,7 +21,7 @@ export default function HelpModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t("how-to-play")}>
+        <Button variant="outline" size="icon" className="shrink-0 rounded-xl" aria-label={t("how-to-play")}>
           <HelpCircle className="h-5 w-5" />
         </Button>
       </DialogTrigger>

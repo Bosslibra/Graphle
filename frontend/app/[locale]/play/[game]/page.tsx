@@ -34,8 +34,6 @@ export default async function PlayPage({ params, searchParams }: PlayPageProps) 
         : randomSeed();
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-8">
-      <PlayView key={`${game}-${mode}-${seed}`} gameId={game} mode={mode} initialSeed={seed} />
-    </div>
+    <PlayView key={`${game}-${mode}-${seed}`} gameId={game} mode={mode} initialSeed={seed} />
   );
 }

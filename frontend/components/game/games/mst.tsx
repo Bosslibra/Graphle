@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import GraphBoard from "@/components/game/graph-board";
-import GameShell, { ShellResult } from "@/components/game/game-shell";
+import GameShell, { NodeChip, ShellResult } from "@/components/game/game-shell";
 import { GameProps } from "@/components/game/games/types";
 import { isSpanningTree, kruskal } from "@/lib/graph/algorithms";
 
@@ -57,7 +57,9 @@ export default function MstGame({ graph, onComplete, onNewGame }: GameProps) {
       canSubmit={selected.length === needed}
       onSubmit={submit}
       onNewGame={onNewGame}
-      seed={graph.seed}
+      footer={chosen.map((e) => (
+        <NodeChip key={e.id} id={`${e.source}–${e.target} ${e.weight}`} />
+      ))}
     >
       <GraphBoard
         graph={graph}

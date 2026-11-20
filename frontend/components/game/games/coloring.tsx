@@ -7,14 +7,9 @@ import GameShell, { ShellResult } from "@/components/game/game-shell";
 import { GameProps } from "@/components/game/games/types";
 import { chromaticNumber, isProperColoring } from "@/lib/graph/algorithms";
 
-/** Palette used by the colouring game (distinct hues, readable in both themes). */
-export const PALETTE = [
-  "oklch(0.68 0.19 25)",
-  "oklch(0.66 0.15 250)",
-  "oklch(0.72 0.17 150)",
-  "oklch(0.82 0.16 90)",
-  "oklch(0.62 0.2 320)",
-];
+/** Number of colours offered; their values come from the skin (graph.palette → --graph-palette-N). */
+export const PALETTE_SIZE = 5;
+const paletteColor = (index: number) => `var(--graph-palette-${index + 1})`;
 
 /** Click a node to cycle its colour; win with a proper colouring that uses the minimum number of colours. */
 export default function ColoringGame({ graph, onComplete, onNewGame }: GameProps) {
@@ -34,7 +29,7 @@ export default function ColoringGame({ graph, onComplete, onNewGame }: GameProps
   function cycle(id: string) {
     setColors((c) => {
       const current = c[id];
-      const next = current === undefined ? 0 : current + 1 < PALETTE.length ? current + 1 : undefined;
+      const next = current === undefined ? 0 : current + 1 < PALETTE_SIZE ? current + 1 : undefined;
       return { ...c, [id]: next };
     });
   }
@@ -68,13 +63,23 @@ export default function ColoringGame({ graph, onComplete, onNewGame }: GameProps
       canSubmit={allColored}
       onSubmit={submit}
       onNewGame={onNewGame}
-      seed={graph.seed}
+      footer={Array.from({ length: PALETTE_SIZE }, (_, i) => (
+        <span
+          key={i}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/60 text-[11px] font-bold text-[var(--graph-node-text)] shadow-sm transition-opacity"
+          style={{ background: paletteColor(i), opacity: Object.values(colors).includes(i) ? 1 : 0.35 }}
+          title={t("colorN", { n: i + 1 })}
+        >
+          {i + 1}
+        </span>
+      ))}
     >
       <GraphBoard
         graph={graph}
         ariaLabel={t("name")}
         showWeights={false}
-        nodeFill={(id) => (colors[id] === undefined ? undefined : PALETTE[colors[id]!])}
+        nodeFill={(id) => (colors[id] === undefined ? undefined : paletteColor(colors[id]!))}
+        nodeBadge={(id) => (colors[id] === undefined ? undefined : String(colors[id]! + 1))}
         onNodeClick={result ? undefined : cycle}
         edgeVisual={(e) => (conflictIds.has(e.id) ? "wrong" : "idle")}
       />

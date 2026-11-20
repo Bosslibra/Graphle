@@ -1,13 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Graph, GraphEdge } from "@/lib/graph/types";
 import { useCurrentSkinVariant } from "@/contexts/site-skin-context";
 
-const NODE_RADIUS = 22;
-const SVG_SIZE = 380;
+const NODE_RADIUS = 24;
+const SVG_SIZE = 330;
 
 /** How an edge is drawn. */
 export type EdgeVisual = "idle" | "active" | "correct" | "wrong" | "dimmed";
@@ -95,20 +94,23 @@ export default function GraphBoard({
   const color = (hue: number) => `oklch(${theme.node.lightness} ${theme.node.chroma} ${hue})`;
 
   return (
-    <Card
-      className="w-full overflow-hidden border p-2"
-      style={{
-        background: "var(--graphle-graph-bg)",
-        borderColor: "var(--graph-board-border)",
-        transition: "background 0.5s ease, border-color 0.3s ease",
-      }}
-    >
-      <CardContent className="p-0">
-        <style>{`@keyframes drawEdge { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }`}</style>
+    // Square board that fits the space it is given (width and height), via container query units.
+    <div className="flex min-h-[180px] w-full flex-1 items-center justify-center" style={{ containerType: "size" }}>
+      <div
+        className="relative overflow-hidden rounded-xl border"
+        style={{
+          width: "min(100cqw, 100cqh)",
+          height: "min(100cqw, 100cqh)",
+          background: "var(--graphle-graph-bg)",
+          borderColor: "var(--graph-board-border)",
+          transition: "background 0.5s ease, border-color 0.3s ease",
+        }}
+      >
+        <style>{`@keyframes drawEdge { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+          .gb-node:focus-visible .gb-focus { stroke: var(--ring); }`}</style>
         <svg
           viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
-          width="100%"
-          className="select-none overflow-visible touch-manipulation"
+          className="h-full w-full select-none touch-manipulation"
           role="img"
           aria-label={ariaLabel}
         >
@@ -188,20 +190,20 @@ export default function GraphBoard({
                 />
                 {showWeights && (<>
                 <rect
-                  x={mx - 11}
-                  y={my - 9}
-                  width={22}
-                  height={17}
-                  rx={4}
+                  x={mx - 12}
+                  y={my - 10}
+                  width={24}
+                  height={19}
+                  rx={5}
                   fill={labelFill}
                   stroke={lit ? "transparent" : theme.edge.inactiveLabelStroke}
                   strokeWidth={1}
                 />
                 <text
                   x={mx}
-                  y={my + 4}
+                  y={my + 4.5}
                   textAnchor="middle"
-                  fontSize={theme.edge.labelFontSize}
+                  fontSize={theme.edge.labelFontSize + 1}
                   fontWeight={lit ? 700 : 500}
                   fill={lit ? theme.edge.activeLabelText : theme.edge.inactiveLabelText}
                   fontFamily="var(--font-mono)"
@@ -238,8 +240,10 @@ export default function GraphBoard({
                 role={clickable ? "button" : undefined}
                 tabIndex={clickable ? 0 : undefined}
                 aria-label={clickable ? node.id : undefined}
-                className={cn("outline-none", clickable && "cursor-pointer")}
+                className={cn("gb-node outline-none", clickable && "cursor-pointer")}
               >
+                {clickable && <circle cx={pos.x} cy={pos.y} r={NODE_RADIUS + 10} fill="transparent" />}
+                <circle className="gb-focus" cx={pos.x} cy={pos.y} r={NODE_RADIUS + 5} fill="none" stroke="transparent" strokeWidth={3} />
                 <circle
                   cx={pos.x}
                   cy={pos.y}
@@ -297,7 +301,7 @@ export default function GraphBoard({
             );
           })}
         </svg>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

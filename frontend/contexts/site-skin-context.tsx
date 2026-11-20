@@ -7,6 +7,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { useTheme } from "next-themes";
@@ -51,7 +52,17 @@ function syncSkinInUrl(skinId: SiteSkinId) {
   window.history.replaceState(window.history.state, "", url.toString());
 }
 
+const noopSubscribe = () => () => {};
+
+/** False during SSR and hydration, true afterwards. */
+function useHydrated(): boolean {
+  return useSyncExternalStore(noopSubscribe, () => true, () => false);
+}
+
 export function SiteSkinProvider({ children }: { children: ReactNode }) {
+  // Until hydration is done, expose exactly what the server rendered (default skin, light mode);
+  // otherwise skin-dependent markup (e.g. graph colours) would not match and React would warn.
+  const hydrated = useHydrated();
   const { resolvedTheme, setTheme } = useTheme();
   const [skinId, setSkinId] = useState<SiteSkinId>(() => {
     if (typeof window === "undefined") {
@@ -96,8 +107,9 @@ export function SiteSkinProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  const skin = useMemo(() => getSiteSkin(skinId), [skinId]);
-  const currentMode: ColorMode = resolvedTheme === "dark" ? "dark" : "light";
+  const effectiveSkinId = hydrated ? skinId : DEFAULT_SITE_SKIN_ID;
+  const skin = useMemo(() => getSiteSkin(effectiveSkinId), [effectiveSkinId]);
+  const currentMode: ColorMode = hydrated && resolvedTheme === "dark" ? "dark" : "light";
   const currentVariant = useMemo(() => getSkinVariant(skin, currentMode), [currentMode, skin]);
 
   const setMode = useCallback(
@@ -113,7 +125,7 @@ export function SiteSkinProvider({ children }: { children: ReactNode }) {
 
   const contextValue = useMemo<SiteSkinContextValue>(
     () => ({
-      currentSkinId: skinId,
+      currentSkinId: effectiveSkinId,
       currentSkin: skin,
       currentMode,
       currentVariant,
@@ -121,7 +133,7 @@ export function SiteSkinProvider({ children }: { children: ReactNode }) {
       setSkin,
       setMode,
     }),
-    [currentMode, currentVariant, setMode, setSkin, skin, skinId],
+    [currentMode, currentVariant, effectiveSkinId, setMode, setSkin, skin],
   );
 
   return <SiteSkinContext.Provider value={contextValue}>{children}</SiteSkinContext.Provider>;

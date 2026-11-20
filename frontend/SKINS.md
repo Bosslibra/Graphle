@@ -137,3 +137,30 @@ Conceptual example for a `green` skin:
    - switch back to another skin and confirm mode is preserved.
 
 No component rewiring should be needed if fields are complete.
+
+## Game Tokens (minigames)
+
+Games never hardcode colours: everything comes from the active variant, either as CSS variables or through `useCurrentSkinVariant().graph` (only `GraphBoard` reads the JS tokens, for the node/edge gradient).
+
+| Token (`graph.*`) | CSS variable | Used for |
+|---|---|---|
+| `hues.start/end`, `node.*`, `edge.*` | (JS) | Node and edge colours on the board |
+| `node.activeText` | `--graph-node-text` | Text on coloured nodes and palette swatches |
+| `palette` (≥ 5 colours) | `--graph-palette-1…5` | Colouring game (colours must be clearly distinct; numbers are shown too) |
+| `pathChip.*` | `--graph-path-chip-*` | Chips under the board and node badges |
+| `result.win/loss` | `--graph-result-{win,loss}-*` | Result panel, correct/wrong edges, home tile status |
+| `surfaces.graphBackground` | `--graphle-graph-bg` | Board background |
+| `surfaces.surfaceBackground` | `--graphle-surface-bg` | Game card, home tiles |
+| `surfaces.mutedBackground` | `--graphle-muted-bg` | Header, mode tabs |
+
+`result` (and `assets`) can be one value for both modes or `{ light, dark }`; give dark mode its own values whenever the foreground would be too dark on a dark background.
+
+## Layout Contract
+
+- The header (`components/layout/site-header.tsx`) is `--header-h` tall (3.5rem).
+- A game page is exactly one screen tall (`100dvh - --header-h`, min 460px): title, mode tabs, status line, then `GameShell`, whose board (`GraphBoard`) takes the remaining space and stays square via container query units.
+- New games should render inside `GameShell` and use `GraphBoard`; they then fit every screen and every skin with no extra work.
+
+## Hydration
+
+`SiteSkinProvider` exposes the default skin in light mode until hydration is done, then switches to the stored skin/mode. This keeps server HTML and the first client render identical (no hydration warnings) even though the skin lives in `localStorage`.

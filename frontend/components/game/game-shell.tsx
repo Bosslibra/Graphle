@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { CheckCircle2, RotateCcw, Undo2, XCircle } from "lucide-react";
+import { CheckCircle2, RotateCcw, Shuffle, Undo2, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,9 +18,9 @@ interface GameShellProps {
   info: ReactNode;
   /** Live counter, top right. */
   stat?: ReactNode;
-  /** The board. */
+  /** The board (GraphBoard grows to fill the free space). */
   children: ReactNode;
-  /** Extra row under the board (e.g. chosen path). */
+  /** Row under the board while playing (e.g. chosen path). Replaced by the result when finished. */
   footer?: ReactNode;
   result?: ShellResult | null;
   canUndo?: boolean;
@@ -29,10 +29,13 @@ interface GameShellProps {
   canSubmit: boolean;
   onSubmit: () => void;
   onNewGame?: () => void;
-  seed: string;
 }
 
-/** Common frame for every minigame: header, board, result panel and controls. */
+/**
+ * Common frame for every minigame. It fills the height it is given (flex column):
+ * header row, board (flexible), one fixed-height row for path/result, controls.
+ * All colours come from skin CSS variables.
+ */
 export default function GameShell({
   info,
   stat,
@@ -45,17 +48,16 @@ export default function GameShell({
   canSubmit,
   onSubmit,
   onNewGame,
-  seed,
 }: GameShellProps) {
   const t = useTranslations("game-shell");
   const finished = !!result;
 
   return (
-    <div className="mx-auto flex w-full max-w-[min(92vw,28rem)] flex-col items-center gap-3 rounded-2xl border border-border/60 p-3 backdrop-blur-md [background:var(--graphle-muted-bg)]">
-      <div className="flex w-full items-center justify-between gap-2 px-1 text-sm text-muted-foreground">
-        <span>{info}</span>
+    <section className="flex h-full min-h-0 w-full flex-col gap-2 rounded-2xl border border-border/60 p-2 shadow-sm backdrop-blur-md sm:gap-3 sm:p-3 [background:var(--graphle-surface-bg)]">
+      <div className="flex min-h-7 items-center justify-between gap-2 px-1 text-sm">
+        <span className="truncate text-muted-foreground">{info}</span>
         {stat && (
-          <Badge variant="outline" className="shrink-0 gap-1 text-xs">
+          <Badge variant="outline" className="shrink-0 gap-1 font-mono text-xs tabular-nums">
             {stat}
           </Badge>
         )}
@@ -63,35 +65,46 @@ export default function GameShell({
 
       {children}
 
-      {footer && <div className="flex min-h-[28px] w-full flex-wrap items-center gap-1 px-1">{footer}</div>}
-
-      {result && (
-        <div
-          role="status"
-          className={cn(
-            "flex w-full flex-col gap-1 rounded-xl border px-4 py-3",
-            result.won
-              ? "border-[var(--graph-result-win-border)] bg-[var(--graph-result-win-bg)] text-[var(--graph-result-win-fg)]"
-              : "border-[var(--graph-result-loss-border)] bg-[var(--graph-result-loss-bg)] text-[var(--graph-result-loss-fg)]",
-          )}
-        >
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            {result.won ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
-            {result.title}
+      <div className="flex min-h-11 items-center">
+        {result ? (
+          <div
+            role="status"
+            className={cn(
+              "flex w-full items-start gap-2 rounded-xl border px-3 py-2",
+              result.won
+                ? "border-[var(--graph-result-win-border)] bg-[var(--graph-result-win-bg)] text-[var(--graph-result-win-fg)]"
+                : "border-[var(--graph-result-loss-border)] bg-[var(--graph-result-loss-bg)] text-[var(--graph-result-loss-fg)]",
+            )}
+          >
+            {result.won ? (
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+            ) : (
+              <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            )}
+            <div className="min-w-0">
+              <p className="text-sm font-semibold leading-tight">{result.title}</p>
+              <p className="line-clamp-2 text-xs text-muted-foreground">{result.detail}</p>
+            </div>
           </div>
-          <div className="text-xs text-muted-foreground">{result.detail}</div>
-        </div>
-      )}
+        ) : (
+          footer && (
+            <div className="flex w-full items-center gap-1 overflow-x-auto px-1 py-1 [scrollbar-width:none]">
+              {footer}
+            </div>
+          )
+        )}
+      </div>
 
-      <div className="flex w-full gap-2">
+      <div className="flex gap-2">
         {finished ? (
           <>
-            <Button variant="outline" size="sm" className="flex-1 gap-1.5 rounded-xl" onClick={onReset}>
-              <RotateCcw className="h-3.5 w-3.5" />
+            <Button variant="outline" className="h-10 flex-1 gap-1.5 rounded-xl" onClick={onReset}>
+              <RotateCcw className="h-4 w-4" />
               {t("retry")}
             </Button>
             {onNewGame && (
-              <Button size="sm" className="flex-1 rounded-xl" onClick={onNewGame}>
+              <Button className="h-10 flex-1 gap-1.5 rounded-xl" onClick={onNewGame}>
+                <Shuffle className="h-4 w-4" />
                 {t("newGame")}
               </Button>
             )}
@@ -101,37 +114,40 @@ export default function GameShell({
             {onUndo && (
               <Button
                 variant="outline"
-                size="sm"
-                className="flex-1 gap-1.5 rounded-xl"
+                size="icon"
+                className="h-10 w-10 shrink-0 rounded-xl"
                 onClick={onUndo}
                 disabled={!canUndo}
+                aria-label={t("undo")}
+                title={t("undo")}
               >
-                <Undo2 className="h-3.5 w-3.5" />
-                {t("undo")}
+                <Undo2 className="h-4 w-4" />
               </Button>
             )}
-            <Button variant="outline" size="sm" className="flex-1 gap-1.5 rounded-xl" onClick={onReset}>
-              <RotateCcw className="h-3.5 w-3.5" />
-              {t("reset")}
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-10 w-10 shrink-0 rounded-xl"
+              onClick={onReset}
+              aria-label={t("reset")}
+              title={t("reset")}
+            >
+              <RotateCcw className="h-4 w-4" />
             </Button>
-            <Button size="sm" className="flex-1 rounded-xl" onClick={onSubmit} disabled={!canSubmit}>
+            <Button className="h-10 flex-1 rounded-xl font-medium" onClick={onSubmit} disabled={!canSubmit}>
               {t("submit")}
             </Button>
           </>
         )}
       </div>
-
-      <p className="text-center text-[11px] text-muted-foreground/60">
-        {t("seed")}: <span className="font-mono">{seed}</span>
-      </p>
-    </div>
+    </section>
   );
 }
 
 /** Small node chip used in path / order footers. */
 export function NodeChip({ id }: { id: string }) {
   return (
-    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-[var(--graph-path-chip-border)] bg-[var(--graph-path-chip-bg)] px-1 text-xs font-semibold text-[var(--graph-path-chip-fg)] shadow-sm">
+    <span className="inline-flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md border border-[var(--graph-path-chip-border)] bg-[var(--graph-path-chip-bg)] px-1 text-xs font-semibold text-[var(--graph-path-chip-fg)] shadow-sm">
       {id}
     </span>
   );

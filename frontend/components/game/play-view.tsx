@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { CalendarDays, ClockFading, Dumbbell, Share2, Swords, Timer } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import GameExplainer from "@/components/game/game-explainer";
@@ -83,6 +82,12 @@ export default function PlayView({ gameId, mode, initialSeed }: PlayViewProps) {
     setSeed(randomSeed());
   }
 
+  /** Shows the share outcome on the button for 2 seconds. */
+  function flash(state: string) {
+    setShareState(state);
+    setTimeout(() => setShareState(null), 2000);
+  }
+
   async function shareDaily() {
     if (!today) return;
     const text = t("daily.shareText", {
@@ -93,118 +98,129 @@ export default function PlayView({ gameId, mode, initialSeed }: PlayViewProps) {
       score: today.score,
       url: window.location.origin,
     });
-    setShareState(await shareOrCopy(text));
+    flash(await shareOrCopy(text));
   }
 
   async function shareChallenge() {
     const url = `${window.location.origin}${window.location.pathname}?mode=challenge&seed=${seed}`;
-    setShareState(await shareOrCopy(t("challenge.shareText", { game: tg("name"), url })));
+    flash(await shareOrCopy(t("challenge.shareText", { game: tg("name"), url })));
   }
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
 
+  const shareLabel = shareState ? t(`shareState.${shareState}`) : null;
+
   return (
-    <div className="flex w-full max-w-md flex-col items-center gap-3">
+    // Exactly one screen tall (below the header) so the board and controls never scroll off;
+    // very short screens fall back to scrolling thanks to min-h.
+    <div className="mx-auto flex h-[calc(100dvh-var(--header-h))] min-h-[460px] w-full max-w-lg flex-col gap-2 px-3 pb-3 pt-2 sm:gap-3 sm:px-4 sm:pt-4">
       {/* Title */}
-      <div className="flex w-full items-center justify-between gap-2 px-1 pt-10 sm:pt-0">
-        <div className="flex items-center gap-2">
-          <game.icon className="h-5 w-5" strokeWidth={1.5} />
-          <h1 className="font-heading text-xl font-semibold tracking-tight">{tg("name")}</h1>
+      <div className="flex items-center justify-between gap-2 px-1">
+        <div className="flex min-w-0 items-center gap-2">
+          <game.icon className="h-5 w-5 shrink-0 text-primary" strokeWidth={1.75} />
+          <h1 className="truncate font-heading text-lg font-semibold tracking-tight sm:text-xl">{tg("name")}</h1>
         </div>
         <GameExplainer gameId={gameId} />
       </div>
 
-      {/* Mode tabs */}
-      <nav aria-label={t("modes")} className="grid w-full grid-cols-4 gap-1 rounded-xl border border-border/60 p-1 [background:var(--graphle-muted-bg)]">
+      {/* Mode tabs: on narrow screens only the active tab shows its label */}
+      <nav
+        aria-label={t("modes")}
+        className="flex gap-1 rounded-xl border border-border/60 p-1 [background:var(--graphle-muted-bg)]"
+      >
         {MODES.map((m) => {
           const Icon = MODE_ICONS[m];
+          const active = m === mode;
           return (
             <Link
               key={m}
               href={`/play/${gameId}?mode=${m}`}
-              aria-current={m === mode ? "page" : undefined}
+              aria-current={active ? "page" : undefined}
+              aria-label={t(`mode.${m}`)}
+              title={t(`mode.${m}`)}
               className={cn(
-                "flex items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-xs transition-colors",
-                m === mode ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent",
+                "flex h-9 min-w-0 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-medium transition-all",
+                active
+                  ? "flex-[2_1_0%] bg-primary text-primary-foreground shadow-sm"
+                  : "flex-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground sm:flex-[2_1_0%]",
               )}
             >
-              <Icon className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{t(`mode.${m}`)}</span>
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className={cn("truncate", !active && "hidden sm:inline")}>{t(`mode.${m}`)}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Mode-specific header */}
-      <div className="flex min-h-6 w-full items-center justify-between px-1 text-xs text-muted-foreground">
+      {/* Mode status line (practice has nothing to show, so no row) */}
+      {mode !== "practice" && (
+      <div className="flex h-8 items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
         {mode === "daily" && (
           <>
-            <span>{t("daily.number", { number: dailyNumber() })}</span>
+            <span className="truncate">{t("daily.number", { number: dailyNumber() })}</span>
             {today && (
-              <Badge variant="outline">
-                {t("daily.done", { result: today.won ? "✅" : "❌", score: today.score })}
-              </Badge>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-lg text-xs" onClick={shareDaily}>
+                <span>
+                  {today.won ? "✅" : "❌"} {today.score}
+                </span>
+                <Share2 className="h-3.5 w-3.5" />
+                <span className="hidden min-[380px]:inline">{shareLabel ?? t("daily.share")}</span>
+              </Button>
             )}
           </>
         )}
-        {mode === "practice" && <span>{t("practice.hint")}</span>}
         {mode === "timed" && (
           <>
             <span>
               {t("timed.solved")}: <strong className="text-foreground">{solved}</strong>
             </span>
-            <span className="flex items-center gap-1">
+            <span
+              className={cn(
+                "flex items-center gap-1 rounded-lg border border-border/60 px-2 py-1",
+                remaining <= 10 && remaining > 0 && "border-[var(--graph-result-loss-border)] text-[var(--graph-result-loss-fg)]",
+              )}
+            >
               <Timer className="h-3.5 w-3.5" />
-              <strong className="font-mono text-foreground tabular-nums">
+              <strong className="font-mono tabular-nums">
                 {mm}:{ss}
               </strong>
             </span>
           </>
         )}
-        {mode === "challenge" && <span>{t("challenge.hint")}</span>}
+        {mode === "challenge" && (
+          <>
+            <span className="truncate">
+              {t("challenge.seed")}: <span className="font-mono text-foreground">{seed}</span>
+            </span>
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-lg text-xs" onClick={shareChallenge}>
+              <Share2 className="h-3.5 w-3.5" />
+              {shareLabel ?? t("challenge.share")}
+            </Button>
+          </>
+        )}
       </div>
-
-      {timeUp ? (
-        <div className="flex w-full flex-col items-center gap-3 rounded-2xl border border-border/60 p-6 text-center [background:var(--graphle-muted-bg)]">
-          <p className="text-lg font-semibold">{t("timed.over")}</p>
-          <p className="text-sm text-muted-foreground">{t("timed.result", { solved })}</p>
-          <Button className="rounded-xl" onClick={restartTimed}>
-            {t("timed.again")}
-          </Button>
-        </div>
-      ) : (
-        <Game
-          key={seed}
-          graph={graph}
-          onComplete={handleComplete}
-          onNewGame={mode === "daily" ? undefined : newRandomGame}
-        />
       )}
 
-      {/* Share actions */}
-      {mode === "daily" && today && (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5 rounded-xl" onClick={shareDaily}>
-            <Share2 className="h-3.5 w-3.5" />
-            {t("daily.share")}
-          </Button>
-          <Button asChild size="sm" variant="ghost" className="rounded-xl">
-            <Link href="/">{t("daily.otherGames")}</Link>
-          </Button>
-        </div>
-      )}
-      {mode === "challenge" && (
-        <Button variant="outline" size="sm" className="gap-1.5 rounded-xl" onClick={shareChallenge}>
-          <Share2 className="h-3.5 w-3.5" />
-          {t("challenge.share")}
-        </Button>
-      )}
-      {shareState && (
-        <p role="status" className="text-xs text-muted-foreground">
-          {t(`shareState.${shareState}`)}
-        </p>
-      )}
+      <div className="flex min-h-0 flex-1">
+        {timeUp ? (
+          <div className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 p-6 text-center [background:var(--graphle-surface-bg)]">
+            <Timer className="h-8 w-8 text-primary" />
+            <p className="text-lg font-semibold">{t("timed.over")}</p>
+            <p className="text-sm text-muted-foreground">{t("timed.result", { solved })}</p>
+            <Button className="h-10 rounded-xl px-6" onClick={restartTimed}>
+              {t("timed.again")}
+            </Button>
+          </div>
+        ) : (
+          <Game
+            key={seed}
+            graph={graph}
+            onComplete={handleComplete}
+            onNewGame={mode === "daily" ? undefined : newRandomGame}
+          />
+        )}
+      </div>
     </div>
   );
 }
