@@ -28,13 +28,13 @@ export function LocaleSwitch() {
       <DropdownMenu>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="bg-popover hover:bg-accent">
               <Languages className="h-[1.2rem] w-[1.2rem]" />
               <span className="sr-only">{t("label")}</span>
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <DropdownMenuContent align="start">
+        <DropdownMenuContent align="end">
           {routing.locales.map((loc) => (
             <DropdownMenuItem
               key={loc}

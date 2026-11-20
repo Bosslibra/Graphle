@@ -3,22 +3,48 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { ThemeProvider } from "@/components/switches/theme-provider";
-import { ControlsDrawer } from "@/components/layout/controls-drawer";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { SiteSkinProvider } from "@/contexts/site-skin-context";
+import SiteHeader from "@/components/layout/site-header";
+import { Fraunces, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import GraphBackground from "@/components/layout/graph-background";
+import { cookies } from "next/headers";
+import {
+  DEFAULT_SITE_SKIN_ID,
+  getSiteSkin,
+  getSkinStylesheet,
+  getSkinVariant,
+  normalizeSiteSkinId,
+  SITE_SKIN_COOKIE,
+} from "@/lib/skins";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
 
-export const metadata: Metadata = {
-  title: "Graphle",
-  description: "Daily puzzle game about graph theory",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "home-page" });
+  const description = t("game-subtitle");
+
+  return {
+    // Set NEXT_PUBLIC_SITE_URL in production so share/OG links are absolute.
+    metadataBase: process.env.NEXT_PUBLIC_SITE_URL ? new URL(process.env.NEXT_PUBLIC_SITE_URL) : undefined,
+    title: { default: "Graphle", template: "%s · Graphle" },
+    description,
+    applicationName: "Graphle",
+    openGraph: { title: "Graphle", description, siteName: "Graphle", type: "website", locale },
+    twitter: { card: "summary", title: "Graphle", description },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -39,20 +65,30 @@ export default async function RootLayout({
 
   setRequestLocale(locale);
 
+  // The chosen skin lives in a cookie so the server can render its colours (no flash on load).
+  const skinId = normalizeSiteSkinId((await cookies()).get(SITE_SKIN_COOKIE)?.value) ?? DEFAULT_SITE_SKIN_ID;
+  const skin = getSiteSkin(skinId);
+  const skinCss = getSkinStylesheet(getSkinVariant(skin, "light"), getSkinVariant(skin, "dark"));
+
   return (
     <html
       lang={locale}
       className={cn(
         "h-full",
         "antialiased",
-        geistSans.variable,
-        geistMono.variable,
+        inter.variable,
+        spaceGrotesk.variable,
+        fraunces.variable,
+        jetbrainsMono.variable,
         "font-sans",
-        inter.variable
       )}
+      data-skin={skinId}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <head>
+        <style id="skin-vars" dangerouslySetInnerHTML={{ __html: skinCss }} />
+      </head>
+      <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
           <ThemeProvider
             attribute="class"
@@ -60,17 +96,15 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TooltipProvider>
-              {/* Site-wide graph background */}
-              <GraphBackground />
-              
-              {/* Single entry point for all UI controls */}
-              <div className="fixed left-4 top-4 sm:left-6 sm:top-6 z-50">
-                <ControlsDrawer />
-              </div>
-
-              {children}
-            </TooltipProvider>
+            <SiteSkinProvider initialSkinId={skinId}>
+              <TooltipProvider>
+                {/* Site-wide graph background */}
+                <GraphBackground />
+                
+                <SiteHeader />
+                <main className="relative z-10 flex flex-1 flex-col">{children}</main>
+              </TooltipProvider>
+            </SiteSkinProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
