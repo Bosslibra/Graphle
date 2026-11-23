@@ -94,15 +94,24 @@ export default function GraphBoard({
     // Square board that fits the space it is given (width and height), via container query units.
     <div className="flex min-h-[180px] w-full flex-1 items-center justify-center" style={{ containerType: "size" }}>
       <div
-        className="relative overflow-hidden rounded-xl border"
+        className="relative"
         style={{
           width: "min(100cqw, 100cqh)",
           height: "min(100cqw, 100cqh)",
-          background: "var(--graphle-graph-bg)",
-          borderColor: "var(--graph-board-border)",
-          transition: "background 0.5s ease, border-color 0.3s ease",
         }}
       >
+        {/* Soft halo instead of a framed box: the skin's board background, faded out radially. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -inset-[6%] rounded-full"
+          style={{
+            background: "var(--graphle-graph-bg)",
+            maskImage: "radial-gradient(closest-side, black 45%, transparent 100%)",
+            WebkitMaskImage: "radial-gradient(closest-side, black 45%, transparent 100%)",
+            opacity: 0.9,
+            transition: "background 0.5s ease",
+          }}
+        />
         <style>{`@keyframes drawEdge { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
           .gb-node:focus-visible .gb-focus { stroke: var(--ring); }
           @keyframes beadIn { from { opacity: 0; } to { opacity: 1; } }
@@ -114,7 +123,7 @@ export default function GraphBoard({
           }`}</style>
         <svg
           viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
-          className="h-full w-full select-none touch-manipulation"
+          className="relative h-full w-full select-none touch-manipulation overflow-visible"
           role="img"
           aria-label={ariaLabel}
         >
