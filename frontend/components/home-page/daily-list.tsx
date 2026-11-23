@@ -66,7 +66,7 @@ export default function DailyList() {
   const played = GAMES.filter((g) => results[g.id]).length;
 
   async function share() {
-    const line = GAMES.map((g) => `${g.emoji}${results[g.id] ? (results[g.id]!.won ? "✅" : "❌") : "⬜"}`).join(" ");
+    const line = GAMES.map((g) => `${g.emoji}${results[g.id] ? (results[g.id]!.won ? "✅" : "❌") : "⬜"}`).join("\n");
     const text = t("shareText", { number: dailyNumber(), line, url: window.location.origin });
     setShareState(await shareOrCopy(text));
     setTimeout(() => setShareState(null), 2000);
