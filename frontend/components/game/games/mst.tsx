@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useGameText } from "@/components/game/worlds/use-game-text";
 import GraphBoard from "@/components/game/graph-board";
 import GameShell, { NodeChip, ShellResult } from "@/components/game/game-shell";
 import { GameProps } from "@/components/game/games/types";
@@ -9,7 +9,7 @@ import { isSpanningTree, kruskal } from "@/lib/graph/algorithms";
 
 /** Pick n − 1 edges; win if they form a spanning tree of minimum weight (any MST counts). */
 export default function MstGame({ graph, onComplete, onNewGame }: GameProps) {
-  const t = useTranslations("games.mst");
+  const t = useGameText("mst");
   const needed = graph.nodes.length - 1;
   const best = useMemo(() => kruskal(graph), [graph]);
   const bestIds = useMemo(() => new Set(best.edges.map((e) => e.id)), [best]);
@@ -63,6 +63,7 @@ export default function MstGame({ graph, onComplete, onNewGame }: GameProps) {
     >
       <GraphBoard
         graph={graph}
+        game="mst"
         ariaLabel={t("name")}
         activeNodes={touched}
         onEdgeClick={result ? undefined : (e) => toggle(e.id)}

@@ -29,7 +29,11 @@
   "skin-switch": {
     "select": "Seleziona skin",
     "title": "Skin del sito",
-    "hint": "Le skin aggiornano layout, componenti UI e grafi."
+    "hint": "Le skin aggiornano layout, componenti UI e grafi.",
+    "classic": "Classiche",
+    "premium": "Premium",
+    "premiumBadge": "Illustrata",
+    "locked": "Presto disponibile"
   },
   "home-page": {
     "game-title": "Graphle",
@@ -204,5 +208,39 @@
   "error-page": {
     "title": "Qualcosa è andato storto",
     "retry": "Riprova"
+  },
+  "worlds": {
+    "realm": {
+      "shortest-path": {
+        "info": "Il messaggero va da {src} a {tgt}",
+        "stat": "Pedaggi: {cost} monete",
+        "won": "Il messaggero è arrivato spendendo il minimo!",
+        "lost": "Hai pagato troppi pedaggi",
+        "wonDetail": "{cost} monete: la strada più economica.",
+        "lostDetail": "Hai pagato {cost} monete; ne bastavano {best} passando per {path}"
+      },
+      "mst": {
+        "info": "Strade {count}/{needed}",
+        "stat": "Costo dei lavori: {weight} monete",
+        "won": "Tutti i villaggi collegati al minimo costo!",
+        "lost": "Strade troppo costose",
+        "wonDetail": "{weight} monete: il costo minimo.",
+        "lostDetail": "Hai speso {weight} monete; ne bastavano {best}. Le strade verdi mostrano una rete ottima.",
+        "notTree": "Queste strade non collegano tutti i villaggi senza giri inutili (c'è un anello o un villaggio isolato). Costo minimo: {best} monete."
+      },
+      "coloring": {
+        "info": "Castelli confinanti, stendardi diversi",
+        "stat": "Stendardi {used} · contese {conflicts}",
+        "won": "Pace nel regno!",
+        "lost": "Troppi stendardi",
+        "wonDetail": "{used} stendardi: il minimo possibile.",
+        "lostDetail": "Hai usato {used} stendardi; ne bastano {best}.",
+        "conflictDetail": "{count, plural, one {# strada collega} other {# strade collegano}} castelli con lo stesso stendardo. Minimo: {best} stendardi.",
+        "colorN": "Stendardo {n}"
+      },
+      "guards": {
+        "lostDetail": "Hai usato {used} guardie; ne bastano {best}. Le sagome tratteggiate mostrano dove servivano."
+      }
+    }
   }
 }

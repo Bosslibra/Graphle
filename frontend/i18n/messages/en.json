@@ -29,7 +29,11 @@
   "skin-switch": {
     "select": "Select skin",
     "title": "Site skins",
-    "hint": "Skins apply to layout, UI components and graph visuals."
+    "hint": "Skins apply to layout, UI components and graph visuals.",
+    "classic": "Classic",
+    "premium": "Premium",
+    "premiumBadge": "Illustrated",
+    "locked": "Coming soon"
   },
   "home-page": {
     "game-title": "Graphle",
@@ -204,5 +208,39 @@
   "error-page": {
     "title": "Something went wrong",
     "retry": "Try again"
+  },
+  "worlds": {
+    "realm": {
+      "shortest-path": {
+        "info": "The messenger rides from {src} to {tgt}",
+        "stat": "Tolls: {cost} coins",
+        "won": "The messenger arrived paying the least!",
+        "lost": "You paid too many tolls",
+        "wonDetail": "{cost} coins: the cheapest road.",
+        "lostDetail": "You paid {cost} coins; {best} were enough via {path}"
+      },
+      "mst": {
+        "info": "Roads {count}/{needed}",
+        "stat": "Building cost: {weight} coins",
+        "won": "Every village connected at the lowest cost!",
+        "lost": "Roads too expensive",
+        "wonDetail": "{weight} coins: the minimum cost.",
+        "lostDetail": "You spent {weight} coins; {best} were enough. The green roads show an optimal network.",
+        "notTree": "These roads do not connect every village without wasted loops (there is a loop or an isolated village). Minimum cost: {best} coins."
+      },
+      "coloring": {
+        "info": "Neighbouring castles, different banners",
+        "stat": "Banners {used} · disputes {conflicts}",
+        "won": "Peace in the realm!",
+        "lost": "Too many banners",
+        "wonDetail": "{used} banners: the minimum possible.",
+        "lostDetail": "You used {used} banners; {best} are enough.",
+        "conflictDetail": "{count, plural, one {# road links} other {# roads link}} castles with the same banner. Minimum: {best} banners.",
+        "colorN": "Banner {n}"
+      },
+      "guards": {
+        "lostDetail": "You used {used} guards; {best} are enough. The dashed outlines show where they were needed."
+      }
+    }
   }
 }

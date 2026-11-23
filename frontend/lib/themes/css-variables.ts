@@ -1,9 +1,16 @@
 import { type SkinVariant } from "@/lib/themes/types";
 
 export function getSkinCssVariables(variant: SkinVariant): Record<string, string> {
-  const { colors, surfaces, layout, typography, graph, assets } = variant;
+  const { colors, surfaces, layout, typography, graph, assets, art } = variant;
 
   return {
+    // Illustrated worlds; abstract skins fall back to their own colours so the vars always exist.
+    "--art-ink": art?.ink ?? colors.foreground,
+    "--art-paper": art?.paper ?? colors.card,
+    "--art-shade": art?.shade ?? colors.mutedForeground,
+    "--art-gold": art?.gold ?? colors.chart4,
+    "--art-road": art?.road ?? colors.mutedForeground,
+    "--art-torch": art?.torch ?? colors.primary,
     "--background": colors.background,
     "--foreground": colors.foreground,
     "--card": colors.card,

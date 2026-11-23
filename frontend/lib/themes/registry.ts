@@ -4,11 +4,14 @@ import {
   type ShadcnColorTokens,
   type SiteSkin,
   type SiteSkinId,
+  type SkinArtTokens,
   type SkinAssets,
   type SkinGraphTokens,
   type SkinLayoutTokens,
   type SkinTypographyTokens,
+  type SkinTier,
   type SkinVariant,
+  type WorldId,
 } from "@/lib/themes/types";
 
 interface LegacyGraphTokens {
@@ -27,8 +30,11 @@ interface LegacySkin {
   id: SiteSkinId;
   name: string;
   description: string;
+  /** Defaults to "free". */
+  tier?: SkinTier;
+  world?: WorldId;
   typography: SkinTypographyTokens;
-  modes: Record<ColorMode, { colors: ShadcnColorTokens; layout: SkinLayoutTokens }>;
+  modes: Record<ColorMode, { colors: ShadcnColorTokens; layout: SkinLayoutTokens; art?: SkinArtTokens }>;
   graph: LegacyGraphTokens;
   assets?: SkinAssets | Record<ColorMode, SkinAssets>;
 }
@@ -92,6 +98,7 @@ function toSkinVariant(legacy: LegacySkin, mode: ColorMode): SkinVariant {
       },
       result: resolveByMode(legacy.graph.result, mode),
     },
+    art: modeTokens.art,
     assets: resolveLegacyAssets(legacy.assets, mode),
   };
 }
@@ -101,6 +108,8 @@ function toSiteSkin(legacy: LegacySkin): SiteSkin {
     id: legacy.id,
     name: legacy.name,
     description: legacy.description,
+    tier: legacy.tier ?? "free",
+    world: legacy.world,
     variants: {
       light: toSkinVariant(legacy, "light"),
       dark: toSkinVariant(legacy, "dark"),
@@ -111,9 +120,6 @@ function toSiteSkin(legacy: LegacySkin): SiteSkin {
 function svgToDataUri(svg: string): string {
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
-
-const NOISE_BITMAP_DATA_URI =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAADUlEQVR42mP8z/CfAQAFgwJ/l0J7WQAAAABJRU5ErkJggg==";
 
 const auroraPattern = svgToDataUri(`
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'>
@@ -190,6 +196,34 @@ const graphOverlayCircuit = svgToDataUri(`
     <path d='M30 40 H160 V120 H350' />
     <path d='M30 190 H130 V300 H350' />
     <path d='M190 40 V190 H300 V340' />
+  </g>
+</svg>
+`);
+
+const realmPattern = svgToDataUri(`
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>
+  <g fill='none' stroke='rgba(140,100,40,0.13)' stroke-width='1'>
+    <path d='M60 0 L120 60 L60 120 L0 60 Z' />
+    <path d='M60 50 C55 56 55 64 60 70 C65 64 65 56 60 50 Z M52 60 H68' />
+  </g>
+</svg>
+`);
+
+const realmMark = svgToDataUri(`
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>
+  <path d='M14 58 V22 H20 V28 H26 V22 H38 V28 H44 V22 H50 V58 Z' fill='#8a5a2b'/>
+  <path d='M27 58 V46 A5 5 0 0 1 37 46 V58 Z' fill='#3a2614'/>
+  <path d='M32 22 V6 L46 11 L32 16' fill='#c2412d' stroke='#3a2614' stroke-width='1.5'/>
+</svg>
+`);
+
+const graphOverlayRealm = svgToDataUri(`
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 380 380'>
+  <g fill='none' stroke='rgba(140,100,40,0.22)' stroke-width='1.2'>
+    <path d='M20 300 C 60 270, 90 290, 130 265' />
+    <path d='M250 60 C 280 40, 320 55, 360 35' />
+    <circle cx='330' cy='330' r='26' />
+    <path d='M330 300 V360 M300 330 H360 M330 310 L334 330 L330 350 L326 330 Z' />
   </g>
 </svg>
 `);
@@ -428,8 +462,6 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
         layout: {
           pageBackground:
             "linear-gradient(145deg, oklch(0.98 0.02 88), oklch(0.95 0.03 82) 58%, oklch(0.94 0.03 104))",
-          pageBackgroundImageUrl: NOISE_BITMAP_DATA_URI,
-          pageBackgroundImageSize: "180px",
           pageBackgroundPatternSvg: paperPattern,
           pageBackgroundPatternSize: "240px",
           mainSurface: "linear-gradient(180deg, oklch(0.99 0.015 88 / 0.92), oklch(0.97 0.02 82 / 0.86))",
@@ -477,8 +509,6 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
         layout: {
           pageBackground:
             "radial-gradient(circle at 15% 20%, oklch(0.35 0.05 72 / 0.35), transparent 52%), oklch(0.17 0.03 72)",
-          pageBackgroundImageUrl: NOISE_BITMAP_DATA_URI,
-          pageBackgroundImageSize: "200px",
           pageBackgroundPatternSvg: paperPattern,
           pageBackgroundPatternSize: "260px",
           mainSurface: "linear-gradient(170deg, oklch(0.25 0.03 72 / 0.76), oklch(0.21 0.03 72 / 0.92))",
@@ -729,12 +759,205 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
       graphBackdropSvg: circuitPattern,
     },
   },
+  realm: {
+    id: "realm",
+    name: "Regno",
+    description: "Illustrated medieval kingdom: guards, messengers, tolls and banners.",
+    tier: "premium",
+    world: "realm",
+    typography: {
+      fontSans: "var(--font-inter)",
+      fontHeading: "var(--font-fraunces)",
+      fontMono: "var(--font-jetbrains-mono)",
+      baseFontSize: "18px",
+    },
+    modes: {
+      light: {
+        colors: {
+          background: "oklch(0.96 0.03 85)",
+          foreground: "oklch(0.3 0.05 55)",
+          card: "oklch(0.98 0.025 88 / 92%)",
+          cardForeground: "oklch(0.3 0.05 55)",
+          popover: "oklch(0.98 0.025 88)",
+          popoverForeground: "oklch(0.3 0.05 55)",
+          primary: "oklch(0.5 0.15 30)",
+          primaryForeground: "oklch(0.98 0.02 88)",
+          secondary: "oklch(0.91 0.04 80)",
+          secondaryForeground: "oklch(0.32 0.05 55)",
+          muted: "oklch(0.93 0.035 82)",
+          mutedForeground: "oklch(0.5 0.05 60)",
+          accent: "oklch(0.88 0.08 85)",
+          accentForeground: "oklch(0.32 0.06 60)",
+          destructive: "oklch(0.55 0.2 27)",
+          border: "oklch(0.83 0.05 75)",
+          input: "oklch(0.83 0.05 75)",
+          ring: "oklch(0.6 0.13 70)",
+          chart1: "oklch(0.55 0.17 28)",
+          chart2: "oklch(0.5 0.13 255)",
+          chart3: "oklch(0.58 0.13 150)",
+          chart4: "oklch(0.75 0.15 85)",
+          chart5: "oklch(0.5 0.15 320)",
+          sidebar: "oklch(0.95 0.03 85)",
+          sidebarForeground: "oklch(0.3 0.05 55)",
+          sidebarPrimary: "oklch(0.5 0.15 30)",
+          sidebarPrimaryForeground: "oklch(0.98 0.02 88)",
+          sidebarAccent: "oklch(0.91 0.04 80)",
+          sidebarAccentForeground: "oklch(0.32 0.05 55)",
+          sidebarBorder: "oklch(0.83 0.05 75)",
+          sidebarRing: "oklch(0.6 0.13 70)",
+          radius: "0.5rem",
+        },
+        layout: {
+          pageBackground:
+            "radial-gradient(circle at 50% 0%, oklch(0.99 0.03 90), transparent 60%), linear-gradient(160deg, oklch(0.95 0.04 85), oklch(0.91 0.05 75))",
+          pageBackgroundPatternSvg: realmPattern,
+          pageBackgroundPatternSize: "120px",
+          mainSurface: "linear-gradient(180deg, oklch(0.98 0.03 88 / 0.9), oklch(0.95 0.035 82 / 0.86))",
+          gameSurface: "linear-gradient(160deg, oklch(0.98 0.03 88 / 0.85), oklch(0.94 0.04 80 / 0.8))",
+          controlsSurface: "oklch(0.97 0.03 85 / 0.88)",
+          graphBackdropTint: "oklch(0.45 0.08 60)",
+          graphBackdropOpacity: "0.4",
+        },
+        art: {
+          ink: "oklch(0.3 0.05 50)",
+          paper: "oklch(0.97 0.03 88)",
+          shade: "oklch(0.55 0.1 45)",
+          gold: "oklch(0.78 0.15 82)",
+          road: "oklch(0.7 0.06 70)",
+          torch: "oklch(0.72 0.17 60)",
+        },
+      },
+      dark: {
+        colors: {
+          background: "oklch(0.17 0.025 260)",
+          foreground: "oklch(0.92 0.03 85)",
+          card: "oklch(0.21 0.03 260 / 90%)",
+          cardForeground: "oklch(0.92 0.03 85)",
+          popover: "oklch(0.21 0.03 260)",
+          popoverForeground: "oklch(0.92 0.03 85)",
+          primary: "oklch(0.78 0.13 70)",
+          primaryForeground: "oklch(0.2 0.03 260)",
+          secondary: "oklch(0.27 0.03 260)",
+          secondaryForeground: "oklch(0.92 0.03 85)",
+          muted: "oklch(0.25 0.03 260)",
+          mutedForeground: "oklch(0.72 0.04 80)",
+          accent: "oklch(0.32 0.05 60)",
+          accentForeground: "oklch(0.94 0.03 85)",
+          destructive: "oklch(0.66 0.19 28)",
+          border: "oklch(0.33 0.03 260)",
+          input: "oklch(0.34 0.03 260)",
+          ring: "oklch(0.72 0.13 70)",
+          chart1: "oklch(0.68 0.17 28)",
+          chart2: "oklch(0.68 0.12 255)",
+          chart3: "oklch(0.72 0.13 150)",
+          chart4: "oklch(0.82 0.14 85)",
+          chart5: "oklch(0.68 0.15 320)",
+          sidebar: "oklch(0.2 0.03 260)",
+          sidebarForeground: "oklch(0.92 0.03 85)",
+          sidebarPrimary: "oklch(0.78 0.13 70)",
+          sidebarPrimaryForeground: "oklch(0.2 0.03 260)",
+          sidebarAccent: "oklch(0.27 0.03 260)",
+          sidebarAccentForeground: "oklch(0.92 0.03 85)",
+          sidebarBorder: "oklch(0.33 0.03 260)",
+          sidebarRing: "oklch(0.72 0.13 70)",
+          radius: "0.5rem",
+        },
+        layout: {
+          pageBackground:
+            "radial-gradient(circle at 80% 10%, oklch(0.4 0.08 70 / 0.25), transparent 45%), oklch(0.16 0.025 260)",
+          pageBackgroundPatternSvg: realmPattern,
+          pageBackgroundPatternSize: "120px",
+          mainSurface: "linear-gradient(170deg, oklch(0.22 0.03 260 / 0.8), oklch(0.18 0.025 260 / 0.92))",
+          gameSurface: "linear-gradient(160deg, oklch(0.23 0.03 260 / 0.8), oklch(0.18 0.03 250 / 0.8))",
+          controlsSurface: "oklch(0.22 0.03 260 / 0.88)",
+          graphBackdropTint: "oklch(0.8 0.1 75)",
+          graphBackdropOpacity: "0.3",
+        },
+        art: {
+          ink: "oklch(0.22 0.03 260)",
+          paper: "oklch(0.88 0.04 85)",
+          shade: "oklch(0.52 0.09 45)",
+          gold: "oklch(0.82 0.14 82)",
+          road: "oklch(0.52 0.04 70)",
+          torch: "oklch(0.8 0.16 65)",
+        },
+      },
+    },
+    graph: {
+      hues: { start: 40, end: 85 },
+      // Heraldic tinctures: gules, azure, vert, or, purpure.
+      palette: ["oklch(0.58 0.2 27)", "oklch(0.52 0.15 258)", "oklch(0.6 0.15 150)", "oklch(0.8 0.15 85)", "oklch(0.52 0.17 320)"],
+      node: {
+        lightness: 0.7,
+        chroma: 0.15,
+        activeText: "oklch(0.2 0.03 50)",
+        inactiveFill: "var(--card)",
+        inactiveStroke: "var(--border)",
+        inactiveText: "var(--foreground)",
+        labelFontSize: 12,
+      },
+      edge: {
+        activeStrokeWidth: 5,
+        inactiveStrokeWidth: 3,
+        inactiveStroke: "var(--art-road)",
+        inactiveOpacity: 0.9,
+        drawDurationMs: 420,
+        activeLabelText: "oklch(0.2 0.03 50)",
+        inactiveLabelFill: "var(--card)",
+        inactiveLabelStroke: "var(--border)",
+        inactiveLabelText: "var(--muted-foreground)",
+        labelFontSize: 10,
+        labelStyle: "pill",
+      },
+      boardBackground: {
+        light: "linear-gradient(135deg, oklch(0.96 0.04 88), oklch(0.92 0.05 78))",
+        dark: "linear-gradient(135deg, oklch(0.2 0.03 260), oklch(0.15 0.03 250))",
+      },
+      pathChip: {
+        background: "oklch(0.5 0.14 30 / 0.85)",
+        foreground: "oklch(0.98 0.02 88)",
+        border: "oklch(0.6 0.14 40 / 0.6)",
+      },
+      result: {
+        light: {
+          win: {
+            border: "oklch(0.58 0.14 150 / 0.45)",
+            background: "oklch(0.93 0.05 150 / 0.35)",
+            foreground: "oklch(0.42 0.11 150)",
+          },
+          loss: {
+            border: "oklch(0.6 0.18 28 / 0.45)",
+            background: "oklch(0.94 0.05 28 / 0.35)",
+            foreground: "oklch(0.5 0.16 28)",
+          },
+        },
+        dark: {
+          win: {
+            border: "oklch(0.7 0.13 150 / 0.5)",
+            background: "oklch(0.5 0.11 150 / 0.2)",
+            foreground: "oklch(0.84 0.12 150)",
+          },
+          loss: {
+            border: "oklch(0.7 0.16 28 / 0.5)",
+            background: "oklch(0.55 0.15 28 / 0.2)",
+            foreground: "oklch(0.82 0.13 28)",
+          },
+        },
+      },
+    },
+    assets: {
+      siteChromeIconSvg: realmMark,
+      graphOverlaySvg: graphOverlayRealm,
+      graphBackdropSvg: realmPattern,
+    },
+  },
 };
 
 export const siteSkinRegistry: Record<SiteSkinId, SiteSkin> = {
   default: toSiteSkin(legacySiteSkins.default),
   paperwave: toSiteSkin(legacySiteSkins.paperwave),
   circuit: toSiteSkin(legacySiteSkins.circuit),
+  realm: toSiteSkin(legacySiteSkins.realm),
 };
 
 const SKIN_ALIASES: Record<string, SiteSkinId> = {

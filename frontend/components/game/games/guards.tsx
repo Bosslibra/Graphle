@@ -1,15 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useGameText } from "@/components/game/worlds/use-game-text";
 import GraphBoard from "@/components/game/graph-board";
 import GameShell, { NodeChip, ShellResult } from "@/components/game/game-shell";
 import { GameProps } from "@/components/game/games/types";
 import { minVertexCover } from "@/lib/graph/algorithms";
+import { useGameArt } from "@/components/game/worlds/registry";
 
 /** Click nodes to place guards; win when every edge is watched with the fewest guards (minimum vertex cover). */
 export default function GuardsGame({ graph, onComplete, onNewGame }: GameProps) {
-  const t = useTranslations("games.guards");
+  const t = useGameText("guards");
+  const art = useGameArt("guards");
   const best = useMemo(() => new Set(minVertexCover(graph)), [graph]);
 
   const [guards, setGuards] = useState<ReadonlySet<string>>(new Set());
@@ -58,10 +60,15 @@ export default function GuardsGame({ graph, onComplete, onNewGame }: GameProps) 
     >
       <GraphBoard
         graph={graph}
+        game="guards"
         ariaLabel={t("name")}
         showWeights={false}
         activeNodes={guards}
-        nodeBadge={(id) => (showBest ? (best.has(id) ? "★" : undefined) : guards.has(id) ? "🛡" : undefined)}
+        // Illustrated skins draw the guard (and the missing ones) themselves.
+        nodeBadge={(id) =>
+          art ? undefined : showBest ? (best.has(id) ? "★" : undefined) : guards.has(id) ? "🛡" : undefined
+        }
+        nodeRole={(id) => (guards.has(id) ? "guarded" : showBest && best.has(id) ? "missed" : "post")}
         onNodeClick={result ? undefined : toggle}
         edgeVisual={(e) => (watched(e) ? "active" : "idle")}
       />

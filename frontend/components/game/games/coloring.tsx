@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useGameText } from "@/components/game/worlds/use-game-text";
 import GraphBoard from "@/components/game/graph-board";
 import GameShell, { ShellResult } from "@/components/game/game-shell";
 import { GameProps } from "@/components/game/games/types";
@@ -13,7 +13,7 @@ const paletteColor = (index: number) => `var(--graph-palette-${index + 1})`;
 
 /** Click a node to cycle its colour; win with a proper colouring that uses the minimum number of colours. */
 export default function ColoringGame({ graph, onComplete, onNewGame }: GameProps) {
-  const t = useTranslations("games.coloring");
+  const t = useGameText("coloring");
   const chi = useMemo(() => chromaticNumber(graph), [graph]);
 
   const [colors, setColors] = useState<Record<string, number | undefined>>({});
@@ -76,6 +76,7 @@ export default function ColoringGame({ graph, onComplete, onNewGame }: GameProps
     >
       <GraphBoard
         graph={graph}
+        game="coloring"
         ariaLabel={t("name")}
         showWeights={false}
         nodeFill={(id) => (colors[id] === undefined ? undefined : paletteColor(colors[id]!))}
