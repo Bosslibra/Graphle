@@ -16,7 +16,7 @@ import {
   getSiteSkin,
   getSkinStylesheet,
   getSkinVariant,
-  normalizeSiteSkinId,
+  resolveUsableSkinId,
   SITE_SKIN_COOKIE,
 } from "@/lib/skins";
 
@@ -65,7 +65,8 @@ export default async function RootLayout({
   setRequestLocale(locale);
 
   // The chosen skin lives in a cookie so the server can render its colours (no flash on load).
-  const skinId = normalizeSiteSkinId((await cookies()).get(SITE_SKIN_COOKIE)?.value) ?? DEFAULT_SITE_SKIN_ID;
+  // A premium skin the visitor cannot use falls back to the default.
+  const skinId = resolveUsableSkinId((await cookies()).get(SITE_SKIN_COOKIE)?.value) ?? DEFAULT_SITE_SKIN_ID;
   const skin = getSiteSkin(skinId);
   const skinCss = getSkinStylesheet(getSkinVariant(skin, "light"), getSkinVariant(skin, "dark"));
 

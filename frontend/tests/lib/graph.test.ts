@@ -4,11 +4,14 @@ import {
   bfsOrder,
   chromaticNumber,
   dijkstra,
+  greedyVertexCover,
+  isVertexCover,
+  minVertexCover,
   isProperColoring,
   isSpanningTree,
   kruskal,
 } from "@/lib/graph/algorithms";
-import { generateShortestPathPuzzle, MIN_PATH_NODES } from "@/lib/graph/puzzles";
+import { generateGuardsPuzzle, generateShortestPathPuzzle, MIN_PATH_NODES } from "@/lib/graph/puzzles";
 import { findEdge } from "@/lib/graph/types";
 import { circleLayout, layoutEdgeLabels } from "@/lib/graph/layout";
 import { Graph } from "@/lib/graph/types";
@@ -170,6 +173,27 @@ describe("shortest path puzzle", () => {
       expect(g.edges.every((e) => ids.has(e.source) && ids.has(e.target))).toBe(true);
       const pairs = g.edges.map((e) => [e.source, e.target].sort().join());
       expect(new Set(pairs).size).toBe(pairs.length);
+    }
+  });
+});
+
+describe("guards (vertex cover)", () => {
+  test("minimum vertex cover of the sample graph", () => {
+    // A-B, B-C, A-C, C-D, B-D: the triangle needs 2 guards, {B, C} also covers D.
+    expect(minVertexCover(G).sort()).toEqual(["B", "C"]);
+    expect(isVertexCover(G, new Set(["B", "C"]))).toBe(true);
+    expect(isVertexCover(G, new Set(["A", "D"]))).toBe(false);
+  });
+
+  test("puzzles are deterministic and greedy does not reach the optimum", () => {
+    expect(generateGuardsPuzzle("ABC123")).toEqual(generateGuardsPuzzle("ABC123"));
+    for (let i = 0; i < 100; i++) {
+      const g = generateGuardsPuzzle(`gd${i}`);
+      expect(g.seed).toBe(`gd${i}`);
+      expect(isConnected(g)).toBe(true);
+      const best = minVertexCover(g);
+      expect(isVertexCover(g, new Set(best))).toBe(true);
+      expect(greedyVertexCover(g).length).toBeGreaterThan(best.length);
     }
   });
 });

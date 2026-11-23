@@ -6,5 +6,8 @@ export type {
   SkinGraphTokens,
   SkinLayoutTokens,
   SkinAssets,
+  SkinArtTokens,
+  SkinTier,
+  WorldId,
   ShadcnColorTokens,
 } from "@/lib/themes/types";

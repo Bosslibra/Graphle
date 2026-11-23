@@ -1,6 +1,12 @@
 export type ColorMode = "light" | "dark";
 
-export type SiteSkinId = "default" | "paperwave" | "circuit";
+export type SiteSkinId = "default" | "paperwave" | "circuit" | "realm";
+
+/** "premium" skins are gated by `canUseSkin` (lib/skins/entitlements.ts). */
+export type SkinTier = "free" | "premium";
+
+/** Illustrated world: replaces the abstract board with per-game art (components/game/worlds). */
+export type WorldId = "realm";
 
 export interface ShadcnColorTokens {
   background: string;
@@ -130,6 +136,22 @@ export interface SkinGraphTokens {
   };
 }
 
+/** Colours for illustrated worlds (`--art-*` CSS variables). Only skins with a `world` need them. */
+export interface SkinArtTokens {
+  /** Outlines and small text on the art. */
+  ink: string;
+  /** Light fill (walls, plaques). */
+  paper: string;
+  /** Second fill (roofs, shadows). */
+  shade: string;
+  /** Coins, crowns, highlights. */
+  gold: string;
+  /** Unbuilt road / path. */
+  road: string;
+  /** Glow of watched or built roads. */
+  torch: string;
+}
+
 export interface SkinAssets {
   siteChromeIconSvg?: string;
   graphOverlaySvg?: string;
@@ -142,6 +164,7 @@ export interface SkinVariant {
   surfaces: SkinSurfaceTokens;
   layout: SkinLayoutTokens;
   graph: SkinGraphTokens;
+  art?: SkinArtTokens;
   assets?: SkinAssets;
 }
 
@@ -149,6 +172,8 @@ export interface SiteSkin {
   id: SiteSkinId;
   name: string;
   description: string;
+  tier: SkinTier;
+  world?: WorldId;
   variants: Record<ColorMode, SkinVariant>;
 }
 

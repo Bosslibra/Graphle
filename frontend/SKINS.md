@@ -169,3 +169,24 @@ Weight labels are placed by `layoutEdgeLabels` (`lib/graph/layout.ts`): each one
 The chosen skin is stored in the `graphle-skin` cookie (`SITE_SKIN_COOKIE`). The root layout reads it, sets `data-skin` on `<html>` and renders the skin's CSS variables for both modes in a `<style id="skin-vars">` in `<head>` (`getSkinStylesheet`: `html:root{…light}` / `html:root.dark{…dark}`). next-themes puts `.dark` on `<html>` before paint, so the first paint already has the right skin and mode: no flash.
 
 `SiteSkinProvider` receives the same id as `initialSkinId`, so server and client markup match. The colour mode is only known in the browser, so JS-read tokens (`useCurrentSkinVariant()`) are the light ones until hydration: anything that differs between modes must therefore be a CSS variable, not a JS value. A `?skin=` link and a skin saved in `localStorage` before the cookie existed are applied after hydration and written to the cookie.
+
+## Tiers and entitlements
+
+Every skin has a `tier`: `"free"` or `"premium"`. Access is decided in one place only, `lib/themes/entitlements.ts` (re-exported by `lib/skins`):
+
+- `getEntitlements()` returns which premium skins the visitor may use. In the beta, `BETA_UNLOCK_ALL = true` unlocks all of them.
+- `canUseSkin(skin)` and `resolveUsableSkinId(value)` (= `normalizeSiteSkinId` + the access check) are used by the root layout (cookie), `SiteSkinProvider` (`?skin=`, localStorage, `setSkin`, other tabs) and the skin switcher (locked entries are shown disabled).
+- A locked skin always falls back to `DEFAULT_SITE_SKIN_ID`.
+
+When payments arrive, only `getEntitlements` changes (e.g. a signed licence in a cookie, verified by the root layout). It must give the same answer on server and client, or the skin markup will not hydrate.
+
+## Illustrated worlds
+
+A skin with `world` (e.g. `realm`, "Regno") swaps the abstract board for per-game illustrations; skins without it are the abstract view.
+
+- Art lives in `components/game/worlds/<world>/`, registered in `components/game/worlds/registry.ts`. Types: `components/game/worlds/types.ts` (`GameArt`).
+- Per game, a world may provide `Node` (replaces circle + id), `roadBed` + `edgeStyle` (roads), `Weight` (replaces the bead/pill) and `Mover` (a piece standing on a node, e.g. the messenger).
+- Games tell `GraphBoard` what they are drawing: `game`, `nodeRole(id)` (e.g. `"guarded"`, `"missed"`, `"start"`, `"goal"`) and `mover`. Game logic never depends on the skin.
+- Art colours come only from CSS variables: `--art-ink`, `--art-paper`, `--art-shade`, `--art-gold`, `--art-road`, `--art-torch` (the variant's optional `art` tokens; abstract skins get fallbacks from their own colours), plus `--primary` and `--graph-palette-*`. Never read mode-dependent JS tokens in art (see Hydration).
+- Short game texts may be overridden per world under `worlds.<world>.<game>.<key>` in `i18n/messages/*.json`; `useGameText(game)` falls back to `games.<game>.<key>`. Rules and theory are shared by every skin.
+- Keep the node id readable (plaque), numbers always visible (weights, colouring badges) and art within ~1.35 × node radius.

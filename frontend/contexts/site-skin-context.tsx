@@ -14,7 +14,9 @@ import { useTheme } from "next-themes";
 import {
   getSiteSkin,
   getSkinVariant,
-  normalizeSiteSkinId,
+  resolveUsableSkinId,
+  canUseSkin,
+  DEFAULT_SITE_SKIN_ID,
   applySkinVariant,
   SITE_SKIN_COOKIE,
   SITE_SKIN_STORAGE_KEY,
@@ -40,7 +42,7 @@ const SiteSkinContext = createContext<SiteSkinContextValue | undefined>(undefine
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
 function readSkinFromUrl(): SiteSkinId | undefined {
-  return normalizeSiteSkinId(new URLSearchParams(window.location.search).get("skin"));
+  return resolveUsableSkinId(new URLSearchParams(window.location.search).get("skin"));
 }
 
 function syncSkinInUrl(skinId: SiteSkinId) {
@@ -78,8 +80,10 @@ export function SiteSkinProvider({
   const [skinId, setSkinId] = useState<SiteSkinId>(initialSkinId);
 
   const setSkin = useCallback((nextSkinId: SiteSkinId) => {
-    setSkinId(nextSkinId);
-    persistSkin(nextSkinId);
+    // Locked premium skins cannot be applied (the switcher shows them as locked).
+    const allowed = canUseSkin(nextSkinId) ? nextSkinId : DEFAULT_SITE_SKIN_ID;
+    setSkinId(allowed);
+    persistSkin(allowed);
   }, []);
 
   // After hydration: a ?skin= link wins; otherwise migrate a skin saved before the cookie existed.
@@ -88,7 +92,7 @@ export function SiteSkinProvider({
       readSkinFromUrl() ??
       (document.cookie.includes(`${SITE_SKIN_COOKIE}=`)
         ? undefined
-        : normalizeSiteSkinId(localStorage.getItem(SITE_SKIN_STORAGE_KEY)));
+        : resolveUsableSkinId(localStorage.getItem(SITE_SKIN_STORAGE_KEY)));
     if (preferred && preferred !== initialSkinId) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off sync with browser-only state
       setSkinId(preferred);
@@ -106,7 +110,7 @@ export function SiteSkinProvider({
         return;
       }
 
-      const next = normalizeSiteSkinId(event.newValue);
+      const next = resolveUsableSkinId(event.newValue);
       if (next) {
         setSkinId(next);
       }

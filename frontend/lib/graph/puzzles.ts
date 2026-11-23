@@ -1,4 +1,4 @@
-import { adjacency, dijkstra } from "@/lib/graph/algorithms";
+import { adjacency, dijkstra, greedyVertexCover, minVertexCover } from "@/lib/graph/algorithms";
 import { generateGraph } from "@/lib/graph/generate";
 import { findEdge, Graph } from "@/lib/graph/types";
 
@@ -88,4 +88,19 @@ export function generateShortestPathPuzzle(seed: string): Graph {
   }
   // Practically unreachable; still returns a playable, non-adjacent puzzle.
   return arrange(fallback!, seed);
+}
+
+/**
+ * Guards (vertex cover) puzzle: prefers graphs where the obvious greedy move
+ * (guard the busiest node first) does not reach the optimum. Deterministic per seed.
+ */
+export function generateGuardsPuzzle(seed: string): Graph {
+  let fallback: Graph | null = null;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const graph = generateGraph(attempt === 0 ? seed : `${seed}#${attempt}`, { nodes: 8, extraEdges: 4 });
+    const best = minVertexCover(graph).length;
+    if (greedyVertexCover(graph).length > best) return { ...graph, seed };
+    fallback ??= graph;
+  }
+  return { ...fallback!, seed };
 }

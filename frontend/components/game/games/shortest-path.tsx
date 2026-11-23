@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useGameText } from "@/components/game/worlds/use-game-text";
 import { ChevronRight } from "lucide-react";
 import GraphBoard from "@/components/game/graph-board";
 import GameShell, { NodeChip, ShellResult } from "@/components/game/game-shell";
@@ -11,7 +11,7 @@ import { findEdge, pairKey } from "@/lib/graph/types";
 
 /** Click nodes from S to T; win if the path cost equals Dijkstra's. */
 export default function ShortestPathGame({ graph, onComplete, onNewGame }: GameProps) {
-  const t = useTranslations("games.shortest-path");
+  const t = useGameText("shortest-path");
   const src = graph.source ?? graph.nodes[0].id;
   const tgt = graph.target ?? graph.nodes[graph.nodes.length - 1].id;
   const best = useMemo(() => dijkstra(graph, src, tgt), [graph, src, tgt]);
@@ -74,11 +74,14 @@ export default function ShortestPathGame({ graph, onComplete, onNewGame }: GameP
     >
       <GraphBoard
         graph={graph}
+        game="shortest-path"
         ariaLabel={t("name")}
         hueStart={src}
         hueEnd={tgt}
         activeNodes={new Set([...path, tgt])}
         focusNode={result ? undefined : last}
+        nodeRole={(id) => (id === src ? "start" : id === tgt ? "goal" : path.includes(id) ? "visited" : "town")}
+        mover={{ at: last, from: path.length > 1 ? path[path.length - 2] : undefined }}
         clickableNodes={clickable}
         onNodeClick={(id) => setPath((p) => [...p, id])}
         edgeDirection={(e) => directions.get(pairKey(e.source, e.target))}

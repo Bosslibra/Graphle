@@ -6,6 +6,8 @@ import { Graph, GraphEdge } from "@/lib/graph/types";
 import { useCurrentSkinVariant } from "@/contexts/site-skin-context";
 import { circleLayout, layoutEdgeLabels } from "@/lib/graph/layout";
 import { BeadFlare, EdgeWeight } from "@/components/game/edge-label";
+import { useGameArt } from "@/components/game/worlds/registry";
+import type { GameId } from "@/components/game/worlds/types";
 
 const NODE_RADIUS = 24;
 const SVG_SIZE = 330;
@@ -37,6 +39,12 @@ export interface GraphBoardProps {
   /** Draw the weight label on each edge. */
   showWeights?: boolean;
   ariaLabel?: string;
+  /** Which game is drawn: illustrated skins pick their art from it. */
+  game?: GameId;
+  /** Game-specific node state passed to the art (e.g. "guarded", "goal"). Ignored by abstract skins. */
+  nodeRole?: (id: string) => string;
+  /** A piece standing on `at` (e.g. the messenger); slides in from `from`. Only drawn by skins with art. */
+  mover?: { at: string; from?: string };
 }
 
 const STATUS_STROKE: Partial<Record<EdgeVisual, string>> = {
@@ -59,7 +67,11 @@ export default function GraphBoard({
   onEdgeClick,
   showWeights = true,
   ariaLabel,
+  game,
+  nodeRole,
+  mover,
 }: GraphBoardProps) {
+  const art = useGameArt(game);
   const theme = useCurrentSkinVariant().graph;
   const labelStyle = theme.edge.labelStyle;
   const variant = useCurrentSkinVariant();
@@ -102,6 +114,8 @@ export default function GraphBoard({
       >
         <style>{`@keyframes drawEdge { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
           .gb-node:focus-visible .gb-focus { stroke: var(--ring); }
+          @keyframes moverIn { from { transform: translate(var(--mx), var(--my)); } to { transform: none; } }
+          @media (prefers-reduced-motion: reduce) { .gb-mover { animation: none !important; } }
           @keyframes beadIn { from { opacity: 0; } to { opacity: 1; } }
           .gb-edge, .gb-stroke, .gb-line { transition: opacity 0.15s ease, stroke-width 0.15s ease; }
           @media (hover: hover) {
@@ -168,7 +182,8 @@ export default function GraphBoard({
               (lit
                 ? color(hues[edge.source] + (hues[edge.target] - hues[edge.source]) * label.t)
                 : theme.edge.inactiveStroke);
-            const bead = showWeights && labelStyle === "bead";
+            const look = art?.edgeStyle?.(visual);
+            const bead = showWeights && labelStyle === "bead" && !art?.Weight;
             // While a lit edge is being drawn, the bead appears when the stroke reaches it.
             const reach = dir && dir.from !== edge.source ? 1 - label.t : label.t;
 
@@ -182,8 +197,24 @@ export default function GraphBoard({
                 {onEdgeClick && (
                   <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="transparent" strokeWidth={18} />
                 )}
+                {art?.roadBed && (
+                  <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke={art.roadBed} strokeWidth={11} strokeLinecap="round" />
+                )}
+                {look?.glow && (
+                  <line
+                    x1={from.x}
+                    y1={from.y}
+                    x2={to.x}
+                    y2={to.y}
+                    stroke={look.glow}
+                    strokeWidth={14}
+                    strokeLinecap="round"
+                    opacity={0.45}
+                    style={{ filter: "blur(3px)" }}
+                  />
+                )}
                 {/* Line and bead flare share one opacity, so where they overlap it is not darker. */}
-                <g className="gb-stroke" opacity={lit ? 1 : theme.edge.inactiveOpacity}>
+                <g className="gb-stroke" opacity={lit || look ? 1 : theme.edge.inactiveOpacity}>
                   <line
                     key={`${edge.id}-${visual}`}
                     x1={from.x}
@@ -191,14 +222,18 @@ export default function GraphBoard({
                     x2={to.x}
                     y2={to.y}
                     className="gb-line"
-                    pathLength={1}
-                    strokeWidth={lineWidth}
-                    stroke={stroke}
+                    pathLength={look?.dash ? undefined : 1}
+                    strokeWidth={look?.width ?? lineWidth}
+                    stroke={look?.stroke ?? stroke}
                     strokeLinecap="round"
-                    style={{
-                      strokeDasharray: lit ? 1 : undefined,
-                      animation: lit ? `drawEdge ${theme.edge.drawDurationMs}ms ease-out forwards` : undefined,
-                    }}
+                    style={
+                      look?.dash
+                        ? { strokeDasharray: look.dash }
+                        : {
+                            strokeDasharray: lit ? 1 : undefined,
+                            animation: lit ? `drawEdge ${theme.edge.drawDurationMs}ms ease-out forwards` : undefined,
+                          }
+                    }
                   />
                   {bead && (
                     <BeadFlare
@@ -210,7 +245,10 @@ export default function GraphBoard({
                     />
                   )}
                 </g>
-                {showWeights && (
+                {showWeights && art?.Weight && (
+                  <art.Weight x={label.x} y={label.y} weight={edge.weight} lit={lit} visual={visual} />
+                )}
+                {showWeights && !art?.Weight && (
                   <EdgeWeight
                     variant={labelStyle}
                     placement={label}
@@ -259,6 +297,20 @@ export default function GraphBoard({
               >
                 {clickable && <circle cx={pos.x} cy={pos.y} r={NODE_RADIUS + 10} fill="transparent" />}
                 <circle className="gb-focus" cx={pos.x} cy={pos.y} r={NODE_RADIUS + 5} fill="none" stroke="transparent" strokeWidth={3} />
+                {art?.Node ? (
+                  <art.Node
+                    id={node.id}
+                    x={pos.x}
+                    y={pos.y}
+                    r={NODE_RADIUS}
+                    role={nodeRole?.(node.id) ?? (lit ? "lit" : "idle")}
+                    fill={explicit}
+                    lit={!!lit}
+                    focused={focusNode === node.id}
+                    clickable={clickable}
+                  />
+                ) : (
+                <>
                 <circle
                   cx={pos.x}
                   cy={pos.y}
@@ -290,6 +342,8 @@ export default function GraphBoard({
                 >
                   {node.id}
                 </text>
+                </>
+                )}
                 {badge && (
                   <g>
                     <circle
@@ -315,6 +369,29 @@ export default function GraphBoard({
               </g>
             );
           })}
+
+          {art?.Mover && mover && positions[mover.at] && (() => {
+            const at = positions[mover.at];
+            const prev = mover.from ? positions[mover.from] : undefined;
+            const dx = prev ? prev.x - at.x : 0;
+            const dy = prev ? prev.y - at.y : 0;
+            return (
+              <g
+                // Remount on every move so the slide animation restarts.
+                key={`${mover.from ?? ""}>${mover.at}`}
+                className="gb-mover pointer-events-none"
+                style={
+                  {
+                    "--mx": `${dx}px`,
+                    "--my": `${dy}px`,
+                    animation: prev ? `moverIn ${theme.edge.drawDurationMs}ms ease-in-out both` : undefined,
+                  } as React.CSSProperties
+                }
+              >
+                <art.Mover x={at.x} y={at.y} facingLeft={dx > 0} />
+              </g>
+            );
+          })()}
         </svg>
       </div>
     </div>

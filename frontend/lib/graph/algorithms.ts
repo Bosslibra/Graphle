@@ -134,3 +134,36 @@ export function chromaticNumber(graph: Graph): number {
   }
   return ids.length;
 }
+
+/** True when every edge has at least one endpoint in `guards`. */
+export function isVertexCover(graph: Graph, guards: ReadonlySet<string>): boolean {
+  return graph.edges.every((e) => guards.has(e.source) || guards.has(e.target));
+}
+
+/** A minimum vertex cover (brute force over subsets by size; fine for small graphs). */
+export function minVertexCover(graph: Graph): string[] {
+  const ids = graph.nodes.map((n) => n.id);
+  let best = ids;
+  for (let mask = 0; mask < 1 << ids.length; mask++) {
+    const pick = ids.filter((_, i) => mask & (1 << i));
+    if (pick.length < best.length && isVertexCover(graph, new Set(pick))) best = pick;
+  }
+  return best;
+}
+
+/** Greedy cover: keep taking the node that watches the most unwatched edges (ties alphabetical). */
+export function greedyVertexCover(graph: Graph): string[] {
+  const guards = new Set<string>();
+  let open = [...graph.edges];
+  while (open.length > 0) {
+    const counts: Record<string, number> = {};
+    open.forEach((e) => {
+      counts[e.source] = (counts[e.source] ?? 0) + 1;
+      counts[e.target] = (counts[e.target] ?? 0) + 1;
+    });
+    const pick = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b))[0];
+    guards.add(pick);
+    open = open.filter((e) => e.source !== pick && e.target !== pick);
+  }
+  return [...guards];
+}
