@@ -130,28 +130,28 @@
       "conflictDetail": "{count, plural, one {# arco collega} other {# archi collegano}} nodi dello stesso colore. Minimo: {best} colori.",
       "colorN": "Colore {n}"
     },
-    "bfs": {
-      "name": "Visita in ampiezza",
-      "short": "BFS",
-      "tagline": "Indovina l'ordine in cui la BFS visita i nodi.",
+    "guards": {
+      "name": "Guardie",
+      "short": "Copertura di vertici",
+      "tagline": "Sorveglia tutte le strade con il minor numero di guardie.",
       "rules": [
-        "La visita parte dal nodo A, già selezionato.",
-        "Clicca gli altri nodi nell'ordine in cui li visita una ricerca in ampiezza.",
-        "Se un nodo ha più vicini non visitati, la BFS li prende in ordine alfabetico.",
-        "Conferma quando tutti i nodi sono nella lista: vinci se l'ordine è esatto."
+        "Clicca un nodo per mettere una guardia, cliccalo di nuovo per toglierla.",
+        "Una guardia sorveglia tutte le strade (archi) che toccano il suo nodo: le strade sorvegliate si accendono.",
+        "Quando ogni strada è sorvegliata puoi confermare. Vinci se usi il numero minimo di guardie.",
+        "Attenzione: mettere la prima guardia sul nodo con più strade non porta sempre alla soluzione migliore."
       ],
       "theory": [
-        "La ricerca in ampiezza esplora il grafo a ondate: prima il nodo di partenza, poi tutti i suoi vicini, poi i vicini dei vicini, e così via.",
-        "Usa una coda (il primo che entra è il primo che esce): prendi il nodo in testa e metti in fondo i suoi vicini non visitati. Sostituendo la coda con una pila si ottiene la ricerca in profondità (DFS), che scende il più possibile prima di tornare indietro.",
-        "Nei grafi senza pesi la BFS trova il cammino con meno archi verso ogni nodo, in tempo O(V + E). La usano i web crawler, i gradi di separazione nei social network e i risolutori di puzzle."
+        "Un insieme di nodi che tocca ogni arco si chiama copertura di vertici (vertex cover). Trovarne una minima è uno dei 21 problemi NP-completi di Karp (1972): verificare una soluzione è facile, trovarla in generale no.",
+        "La strategia avida \"prendi sempre il nodo con più archi scoperti\" sembra naturale ma può sbagliare, come hai visto. Esiste però un trucco semplice: prendi un arco scoperto qualsiasi e metti la guardia su entrambi gli estremi. Non sarà ottimo, ma non userà mai più del doppio delle guardie necessarie.",
+        "I nodi senza guardia formano un insieme indipendente: nessuna coppia è collegata. Quindi minimizzare le guardie equivale a massimizzare l'insieme indipendente. Nei grafi bipartiti il teorema di König dice che la copertura minima ha la stessa dimensione dell'accoppiamento massimo. Si usa per posizionare sensori, telecamere o monitor di rete."
       ],
-      "link": "https://it.wikipedia.org/wiki/Ricerca_in_ampiezza",
-      "info": "Parti da {src}",
-      "stat": "{count}/{total} nodi",
-      "won": "Ordine corretto!",
-      "lost": "Ordine sbagliato",
-      "wonDetail": "È proprio così che la BFS esplora questo grafo.",
-      "lostDetail": "Ordine BFS: {order}"
+      "link": "https://it.wikipedia.org/wiki/Copertura_dei_vertici",
+      "info": "Ogni strada deve essere sorvegliata",
+      "stat": "Guardie {used} · strade scoperte {open}",
+      "won": "Sorveglianza ottima!",
+      "lost": "Troppe guardie",
+      "wonDetail": "{used} guardie: è il minimo possibile.",
+      "lostDetail": "Hai usato {used} guardie; ne bastano {best}. Le ★ mostrano una soluzione ottima."
     }
   },
   "game-shell": {

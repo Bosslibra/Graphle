@@ -130,28 +130,28 @@
       "conflictDetail": "{count, plural, one {# edge joins} other {# edges join}} same-coloured nodes. Minimum: {best} colours.",
       "colorN": "Colour {n}"
     },
-    "bfs": {
-      "name": "Breadth-first search",
-      "short": "BFS",
-      "tagline": "Predict the order in which BFS visits the nodes.",
+    "guards": {
+      "name": "Guards",
+      "short": "Vertex cover",
+      "tagline": "Watch every road with as few guards as possible.",
       "rules": [
-        "The visit starts from node A, already selected.",
-        "Click the other nodes in the order a breadth-first search visits them.",
-        "When a node has several unvisited neighbours, BFS takes them in alphabetical order.",
-        "Submit when every node is in the list: you win if the order is exactly right."
+        "Click a node to place a guard, click it again to remove it.",
+        "A guard watches every road (edge) touching its node: watched roads light up.",
+        "Once every road is watched you can submit. You win with the minimum number of guards.",
+        "Careful: putting the first guard on the busiest node does not always lead to the best solution."
       ],
       "theory": [
-        "Breadth-first search explores a graph in waves: first the start node, then all its neighbours, then their neighbours, and so on.",
-        "It uses a queue (first in, first out): take the node at the front and append its unvisited neighbours to the back. Swap the queue for a stack and you get depth-first search (DFS), which dives as deep as possible first.",
-        "On graphs without weights BFS finds the path with the fewest edges to every node, in O(V + E) time. Web crawlers, the degrees of separation in social networks and puzzle solvers all use it."
+        "A set of nodes touching every edge is a vertex cover. Finding a minimum one is among Karp's 21 NP-complete problems (1972): checking a solution is easy, finding one in general is not.",
+        "The greedy rule \"always take the node with the most unwatched edges\" feels natural but can fail, as you have seen. There is a simple trick, though: take any unwatched edge and guard both of its ends. It will not be optimal, but it never uses more than twice the guards needed.",
+        "The unguarded nodes form an independent set: no two of them are connected. So minimising guards is the same as maximising the independent set. In bipartite graphs, König's theorem says the minimum cover has the same size as the maximum matching. It is used to place sensors, cameras or network monitors."
       ],
-      "link": "https://en.wikipedia.org/wiki/Breadth-first_search",
-      "info": "Start from {src}",
-      "stat": "{count}/{total} nodes",
-      "won": "Correct order!",
-      "lost": "Wrong order",
-      "wonDetail": "That is exactly how BFS explores this graph.",
-      "lostDetail": "BFS order: {order}"
+      "link": "https://en.wikipedia.org/wiki/Vertex_cover",
+      "info": "Every road must be watched",
+      "stat": "Guards {used} · unwatched roads {open}",
+      "won": "Optimal watch!",
+      "lost": "Too many guards",
+      "wonDetail": "{used} guards: the minimum possible.",
+      "lostDetail": "You used {used} guards; {best} are enough. The ★ marks show an optimal solution."
     }
   },
   "game-shell": {

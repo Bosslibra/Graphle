@@ -1,12 +1,12 @@
 import type { ComponentType } from "react";
-import { Palette, Route, TreePine, Waypoints, type LucideIcon } from "lucide-react";
+import { Palette, Route, Shield, TreePine, type LucideIcon } from "lucide-react";
 import ShortestPathGame from "@/components/game/games/shortest-path";
 import MstGame from "@/components/game/games/mst";
 import ColoringGame from "@/components/game/games/coloring";
-import BfsGame from "@/components/game/games/bfs";
+import GuardsGame from "@/components/game/games/guards";
 import type { GameProps } from "@/components/game/games/types";
 import { generateGraph } from "@/lib/graph/generate";
-import { generateShortestPathPuzzle } from "@/lib/graph/puzzles";
+import { generateGuardsPuzzle, generateShortestPathPuzzle } from "@/lib/graph/puzzles";
 import type { Graph } from "@/lib/graph/types";
 
 export interface GameDefinition {
@@ -25,7 +25,7 @@ export const GAMES: GameDefinition[] = [
   { id: "shortest-path", icon: Route, emoji: "🛣️", generate: generateShortestPathPuzzle, Component: ShortestPathGame },
   { id: "mst", icon: TreePine, emoji: "🌲", generate: (seed) => generateGraph(seed, { nodes: 6 }), Component: MstGame },
   { id: "coloring", icon: Palette, emoji: "🎨", generate: (seed) => generateGraph(seed, { nodes: 7, extraEdges: 5 }), Component: ColoringGame },
-  { id: "bfs", icon: Waypoints, emoji: "🔍", generate: (seed) => generateGraph(seed, { nodes: 7, extraEdges: 3 }), Component: BfsGame },
+  { id: "guards", icon: Shield, emoji: "💂", generate: generateGuardsPuzzle, Component: GuardsGame },
 ];
 
 export const MODES = ["daily", "practice", "timed", "challenge"] as const;
