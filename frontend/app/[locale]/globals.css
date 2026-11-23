@@ -163,16 +163,14 @@
   body {
     background-color: var(--background);
     background-image:
-      var(--graphle-page-bg-pattern),
       var(--graphle-page-bg-image),
       var(--graphle-page-bg);
     background-size:
-      var(--graphle-page-bg-pattern-size),
       var(--graphle-page-bg-image-size),
       cover;
-    background-position: center, center, center;
-    background-repeat: repeat, no-repeat, no-repeat;
-    background-attachment: fixed, fixed, fixed;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed, fixed;
   }
   body {
     @apply text-foreground;

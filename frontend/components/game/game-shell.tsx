@@ -53,11 +53,11 @@ export default function GameShell({
   const finished = !!result;
 
   return (
-    <section className="flex h-full min-h-0 w-full flex-col gap-2 rounded-2xl border border-border/60 p-2 shadow-sm backdrop-blur-md sm:gap-3 sm:p-3 [background:var(--graphle-surface-bg)]">
+    <section className="flex h-full min-h-0 w-full flex-col gap-2 sm:gap-3">
       <div className="flex min-h-7 items-center justify-between gap-2 px-1 text-sm">
-        <span className="truncate text-muted-foreground">{info}</span>
+        <span className="truncate font-medium text-foreground/80">{info}</span>
         {stat && (
-          <Badge variant="outline" className="shrink-0 gap-1 font-mono text-xs tabular-nums">
+          <Badge variant="outline" className="shrink-0 gap-1 border-border/60 font-mono text-xs tabular-nums backdrop-blur-sm [background:var(--graphle-surface-bg)]">
             {stat}
           </Badge>
         )}
