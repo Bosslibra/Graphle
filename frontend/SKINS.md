@@ -150,8 +150,8 @@ Games never hardcode colours: everything comes from the active variant, either a
 | `palette` (≥ 5 colours) | `--graph-palette-1…5` | Colouring game (colours must be clearly distinct; numbers are shown too) |
 | `pathChip.*` | `--graph-path-chip-*` | Chips under the board and node badges |
 | `result.win/loss` | `--graph-result-{win,loss}-*` | Result panel, correct/wrong edges, home tile status |
-| `surfaces.graphBackground` | `--graphle-graph-bg` | Board background |
-| `surfaces.surfaceBackground` | `--graphle-surface-bg` | Game card, home tiles |
+| `surfaces.graphBackground` | `--graphle-graph-bg` | Not used by the board (it has no background) |
+| `surfaces.surfaceBackground` | `--graphle-surface-bg` | Game stat badge, home tiles |
 | `surfaces.mutedBackground` | `--graphle-muted-bg` | Header, mode tabs |
 
 Weight labels are placed by `layoutEdgeLabels` (`lib/graph/layout.ts`): each one slides along its own edge away from crossings, other labels and nodes, so labels of edges crossing at the same point never stack.
