@@ -150,7 +150,7 @@ Games never hardcode colours: everything comes from the active variant, either a
 | `palette` (≥ 5 colours) | `--graph-palette-1…5` | Colouring game (colours must be clearly distinct; numbers are shown too) |
 | `pathChip.*` | `--graph-path-chip-*` | Chips under the board and node badges |
 | `result.win/loss` | `--graph-result-{win,loss}-*` | Result panel, correct/wrong edges, home tile status |
-| `surfaces.graphBackground` | `--graphle-graph-bg` | Soft radial halo behind the board (no frame) |
+| `surfaces.graphBackground` | `--graphle-graph-bg` | Not used by the board (it has no background) |
 | `surfaces.surfaceBackground` | `--graphle-surface-bg` | Game stat badge, home tiles |
 | `surfaces.mutedBackground` | `--graphle-muted-bg` | Header, mode tabs |
 

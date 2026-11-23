@@ -100,18 +100,6 @@ export default function GraphBoard({
           height: "min(100cqw, 100cqh)",
         }}
       >
-        {/* Soft halo instead of a framed box: the skin's board background, faded out radially. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -inset-[6%] rounded-full"
-          style={{
-            background: "var(--graphle-graph-bg)",
-            maskImage: "radial-gradient(closest-side, black 45%, transparent 100%)",
-            WebkitMaskImage: "radial-gradient(closest-side, black 45%, transparent 100%)",
-            opacity: 0.9,
-            transition: "background 0.5s ease",
-          }}
-        />
         <style>{`@keyframes drawEdge { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
           .gb-node:focus-visible .gb-focus { stroke: var(--ring); }
           @keyframes beadIn { from { opacity: 0; } to { opacity: 1; } }

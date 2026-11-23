@@ -10,7 +10,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import GraphBackground from "@/components/layout/graph-background";
 import { cookies } from "next/headers";
 import {
   DEFAULT_SITE_SKIN_ID,
@@ -98,9 +97,6 @@ export default async function RootLayout({
           >
             <SiteSkinProvider initialSkinId={skinId}>
               <TooltipProvider>
-                {/* Site-wide graph background */}
-                <GraphBackground />
-                
                 <SiteHeader />
                 <main className="relative z-10 flex flex-1 flex-col">{children}</main>
               </TooltipProvider>
