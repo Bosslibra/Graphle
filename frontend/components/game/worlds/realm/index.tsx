@@ -144,7 +144,22 @@ const coloring: GameArt = {
   edgeStyle: (visual) => roadStyle(visual, { width: 3 }),
 };
 
+function Preview() {
+  const road = "M0 40 C 50 30, 70 44, 110 36 S 170 30, 200 38";
+  return (
+    <>
+      <path d={road} stroke={ART.ROAD} strokeWidth={6} fill="none" />
+      <path d={road} stroke={ART.TORCH} strokeWidth={2} fill="none" />
+      <g transform="translate(100 30) scale(0.75)">
+        <Stand />
+        <Guard />
+      </g>
+    </>
+  );
+}
+
 export const realmWorld: WorldDefinition = {
   id: "realm",
   games: { guards, "shortest-path": shortestPath, mst, coloring },
+  Preview,
 };

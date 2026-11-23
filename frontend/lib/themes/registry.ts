@@ -228,6 +228,36 @@ const graphOverlayRealm = svgToDataUri(`
 </svg>
 `);
 
+const starfieldPattern = svgToDataUri(`
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>
+  <g fill='rgba(190,200,255,0.55)'>
+    <circle cx='12' cy='18' r='0.9'/><circle cx='64' cy='42' r='0.6'/><circle cx='118' cy='12' r='1.1'/>
+    <circle cx='170' cy='58' r='0.7'/><circle cx='36' cy='96' r='0.6'/><circle cx='92' cy='124' r='1'/>
+    <circle cx='150' cy='110' r='0.6'/><circle cx='186' cy='160' r='0.9'/><circle cx='22' cy='170' r='0.7'/>
+    <circle cx='108' cy='182' r='0.6'/><circle cx='74' cy='76' r='0.5'/><circle cx='140' cy='150' r='0.5'/>
+  </g>
+  <path d='M118 6 V18 M112 12 H124' stroke='rgba(190,200,255,0.35)' stroke-width='0.6'/>
+</svg>
+`);
+
+const cosmosMark = svgToDataUri(`
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>
+  <circle cx='32' cy='32' r='14' fill='#6c5ce7'/>
+  <ellipse cx='32' cy='32' rx='26' ry='8' fill='none' stroke='#5ce1e6' stroke-width='3' transform='rotate(-20 32 32)'/>
+  <circle cx='27' cy='27' r='4' fill='rgba(255,255,255,0.35)'/>
+</svg>
+`);
+
+const graphOverlayCosmos = svgToDataUri(`
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 380 380'>
+  <g fill='none' stroke='rgba(150,160,255,0.22)' stroke-width='1'>
+    <ellipse cx='190' cy='190' rx='175' ry='60' transform='rotate(-18 190 190)'/>
+    <circle cx='340' cy='40' r='14'/>
+    <path d='M30 330 l6 -14 l6 14 l-14 -8 h16 z'/>
+  </g>
+</svg>
+`);
+
 /**
  * Weight label shape for every skin that does not set its own `graph.edge.labelStyle`.
  * "bead": the edge line flares into a circle holding the weight. "pill": previous rotated capsule.
@@ -951,6 +981,198 @@ const legacySiteSkins: Record<SiteSkinId, LegacySkin> = {
       graphBackdropSvg: realmPattern,
     },
   },
+  cosmos: {
+    id: "cosmos",
+    name: "Cosmo",
+    description: "Illustrated deep space: sentinel drones, a rocket burning fuel, colonies and radio frequencies.",
+    tier: "premium",
+    world: "cosmos",
+    typography: {
+      fontSans: "var(--font-inter)",
+      fontHeading: "var(--font-space-grotesk)",
+      fontMono: "var(--font-jetbrains-mono)",
+      baseFontSize: "18px",
+    },
+    modes: {
+      light: {
+        colors: {
+          background: "oklch(0.97 0.015 265)",
+          foreground: "oklch(0.25 0.05 275)",
+          card: "oklch(0.99 0.01 265 / 92%)",
+          cardForeground: "oklch(0.25 0.05 275)",
+          popover: "oklch(0.99 0.01 265)",
+          popoverForeground: "oklch(0.25 0.05 275)",
+          primary: "oklch(0.5 0.2 275)",
+          primaryForeground: "oklch(0.98 0.01 265)",
+          secondary: "oklch(0.92 0.03 265)",
+          secondaryForeground: "oklch(0.3 0.06 275)",
+          muted: "oklch(0.94 0.02 265)",
+          mutedForeground: "oklch(0.5 0.05 270)",
+          accent: "oklch(0.9 0.06 210)",
+          accentForeground: "oklch(0.3 0.07 230)",
+          destructive: "oklch(0.58 0.21 25)",
+          border: "oklch(0.86 0.03 265)",
+          input: "oklch(0.86 0.03 265)",
+          ring: "oklch(0.6 0.17 275)",
+          chart1: "oklch(0.6 0.2 275)",
+          chart2: "oklch(0.7 0.13 210)",
+          chart3: "oklch(0.7 0.16 150)",
+          chart4: "oklch(0.78 0.15 80)",
+          chart5: "oklch(0.62 0.22 340)",
+          sidebar: "oklch(0.96 0.015 265)",
+          sidebarForeground: "oklch(0.25 0.05 275)",
+          sidebarPrimary: "oklch(0.5 0.2 275)",
+          sidebarPrimaryForeground: "oklch(0.98 0.01 265)",
+          sidebarAccent: "oklch(0.92 0.03 265)",
+          sidebarAccentForeground: "oklch(0.3 0.06 275)",
+          sidebarBorder: "oklch(0.86 0.03 265)",
+          sidebarRing: "oklch(0.6 0.17 275)",
+          radius: "1rem",
+        },
+        layout: {
+          pageBackground:
+            "radial-gradient(circle at 85% 0%, oklch(0.9 0.06 300 / 0.6), transparent 45%), radial-gradient(circle at 0% 100%, oklch(0.92 0.05 210 / 0.6), transparent 50%), oklch(0.96 0.02 265)",
+          pageBackgroundPatternSvg: starfieldPattern,
+          pageBackgroundPatternSize: "200px",
+          mainSurface: "linear-gradient(160deg, oklch(1 0 0 / 0.75), oklch(0.96 0.02 265 / 0.8))",
+          gameSurface: "linear-gradient(150deg, oklch(1 0 0 / 0.72), oklch(0.95 0.03 280 / 0.7))",
+          controlsSurface: "oklch(0.99 0.01 265 / 0.85)",
+          graphBackdropTint: "oklch(0.45 0.12 275)",
+          graphBackdropOpacity: "0.4",
+        },
+        art: {
+          ink: "oklch(0.24 0.05 275)",
+          paper: "oklch(0.98 0.01 265)",
+          shade: "oklch(0.62 0.15 285)",
+          gold: "oklch(0.8 0.17 150)",
+          road: "oklch(0.75 0.06 270)",
+          torch: "oklch(0.68 0.15 215)",
+        },
+      },
+      dark: {
+        colors: {
+          background: "oklch(0.14 0.035 275)",
+          foreground: "oklch(0.94 0.02 265)",
+          card: "oklch(0.19 0.04 275 / 90%)",
+          cardForeground: "oklch(0.94 0.02 265)",
+          popover: "oklch(0.19 0.04 275)",
+          popoverForeground: "oklch(0.94 0.02 265)",
+          primary: "oklch(0.8 0.13 210)",
+          primaryForeground: "oklch(0.17 0.04 275)",
+          secondary: "oklch(0.25 0.04 275)",
+          secondaryForeground: "oklch(0.94 0.02 265)",
+          muted: "oklch(0.23 0.04 275)",
+          mutedForeground: "oklch(0.74 0.05 265)",
+          accent: "oklch(0.3 0.08 300)",
+          accentForeground: "oklch(0.95 0.02 265)",
+          destructive: "oklch(0.68 0.2 25)",
+          border: "oklch(0.3 0.05 275)",
+          input: "oklch(0.31 0.05 275)",
+          ring: "oklch(0.75 0.13 210)",
+          chart1: "oklch(0.72 0.17 280)",
+          chart2: "oklch(0.8 0.13 210)",
+          chart3: "oklch(0.8 0.15 150)",
+          chart4: "oklch(0.85 0.14 85)",
+          chart5: "oklch(0.72 0.2 340)",
+          sidebar: "oklch(0.17 0.04 275)",
+          sidebarForeground: "oklch(0.94 0.02 265)",
+          sidebarPrimary: "oklch(0.8 0.13 210)",
+          sidebarPrimaryForeground: "oklch(0.17 0.04 275)",
+          sidebarAccent: "oklch(0.25 0.04 275)",
+          sidebarAccentForeground: "oklch(0.94 0.02 265)",
+          sidebarBorder: "oklch(0.3 0.05 275)",
+          sidebarRing: "oklch(0.75 0.13 210)",
+          radius: "1rem",
+        },
+        layout: {
+          pageBackground:
+            "radial-gradient(circle at 80% 5%, oklch(0.35 0.12 300 / 0.45), transparent 45%), radial-gradient(circle at 10% 90%, oklch(0.32 0.09 220 / 0.4), transparent 50%), oklch(0.12 0.035 275)",
+          pageBackgroundPatternSvg: starfieldPattern,
+          pageBackgroundPatternSize: "200px",
+          mainSurface: "linear-gradient(160deg, oklch(0.19 0.04 275 / 0.75), oklch(0.15 0.035 275 / 0.9))",
+          gameSurface: "linear-gradient(150deg, oklch(0.2 0.05 280 / 0.75), oklch(0.14 0.04 260 / 0.75))",
+          controlsSurface: "oklch(0.19 0.04 275 / 0.88)",
+          graphBackdropTint: "oklch(0.8 0.12 220)",
+          graphBackdropOpacity: "0.3",
+        },
+        art: {
+          ink: "oklch(0.2 0.04 275)",
+          paper: "oklch(0.9 0.02 265)",
+          shade: "oklch(0.55 0.16 285)",
+          gold: "oklch(0.85 0.17 150)",
+          road: "oklch(0.42 0.07 275)",
+          torch: "oklch(0.82 0.14 205)",
+        },
+      },
+    },
+    graph: {
+      hues: { start: 205, end: 300 },
+      // Radio channels: clearly distinct and readable on a dark sky.
+      palette: ["oklch(0.66 0.2 25)", "oklch(0.7 0.14 220)", "oklch(0.76 0.17 150)", "oklch(0.84 0.15 90)", "oklch(0.64 0.22 320)"],
+      node: {
+        lightness: 0.68,
+        chroma: 0.16,
+        activeText: "oklch(0.15 0.04 275)",
+        inactiveFill: "var(--card)",
+        inactiveStroke: "var(--border)",
+        inactiveText: "var(--foreground)",
+        labelFontSize: 12,
+      },
+      edge: {
+        activeStrokeWidth: 4,
+        inactiveStrokeWidth: 2.4,
+        inactiveStroke: "var(--art-road)",
+        inactiveOpacity: 0.9,
+        drawDurationMs: 460,
+        activeLabelText: "oklch(0.15 0.04 275)",
+        inactiveLabelFill: "var(--card)",
+        inactiveLabelStroke: "var(--border)",
+        inactiveLabelText: "var(--muted-foreground)",
+        labelFontSize: 10,
+        labelStyle: "pill",
+      },
+      boardBackground: {
+        light: "linear-gradient(135deg, oklch(0.97 0.02 265), oklch(0.93 0.04 290))",
+        dark: "linear-gradient(135deg, oklch(0.16 0.04 275), oklch(0.11 0.04 300))",
+      },
+      pathChip: {
+        background: "oklch(0.5 0.18 275 / 0.85)",
+        foreground: "oklch(0.98 0.01 265)",
+        border: "oklch(0.62 0.16 275 / 0.6)",
+      },
+      result: {
+        light: {
+          win: {
+            border: "oklch(0.6 0.15 160 / 0.45)",
+            background: "oklch(0.93 0.05 160 / 0.35)",
+            foreground: "oklch(0.45 0.12 160)",
+          },
+          loss: {
+            border: "oklch(0.62 0.19 25 / 0.45)",
+            background: "oklch(0.94 0.05 25 / 0.35)",
+            foreground: "oklch(0.52 0.17 25)",
+          },
+        },
+        dark: {
+          win: {
+            border: "oklch(0.72 0.14 160 / 0.5)",
+            background: "oklch(0.5 0.12 160 / 0.2)",
+            foreground: "oklch(0.86 0.13 160)",
+          },
+          loss: {
+            border: "oklch(0.7 0.17 25 / 0.5)",
+            background: "oklch(0.55 0.15 25 / 0.2)",
+            foreground: "oklch(0.82 0.14 25)",
+          },
+        },
+      },
+    },
+    assets: {
+      siteChromeIconSvg: cosmosMark,
+      graphOverlaySvg: graphOverlayCosmos,
+      graphBackdropSvg: starfieldPattern,
+    },
+  },
 };
 
 export const siteSkinRegistry: Record<SiteSkinId, SiteSkin> = {
@@ -958,6 +1180,7 @@ export const siteSkinRegistry: Record<SiteSkinId, SiteSkin> = {
   paperwave: toSiteSkin(legacySiteSkins.paperwave),
   circuit: toSiteSkin(legacySiteSkins.circuit),
   realm: toSiteSkin(legacySiteSkins.realm),
+  cosmos: toSiteSkin(legacySiteSkins.cosmos),
 };
 
 const SKIN_ALIASES: Record<string, SiteSkinId> = {

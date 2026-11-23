@@ -5,8 +5,8 @@ import { Check, Crown, Lock, Palette } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useSiteSkin } from "@/contexts/site-skin-context";
-import { canUseSkin, type SiteSkin } from "@/lib/skins";
-import { Guard, Stand } from "@/components/game/worlds/realm/shared";
+import { canUseSkin, type ColorMode, type SiteSkin } from "@/lib/skins";
+import { WORLDS } from "@/components/game/worlds/registry";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -38,9 +38,11 @@ function HuePreview({ skin }: { skin: SiteSkin }) {
 }
 
 /** Small scene drawn with the skin's own art colours (not the active skin's). */
-function WorldPreview({ skin }: { skin: SiteSkin }) {
-  const variant = skin.variants.light;
+function WorldPreview({ skin, mode }: { skin: SiteSkin; mode: ColorMode }) {
+  // Mode is known here: the menu only opens after hydration.
+  const variant = skin.variants[mode];
   const art = variant.art;
+  const Scene = skin.world ? WORLDS[skin.world].Preview : undefined;
   const vars = {
     "--art-ink": art?.ink,
     "--art-paper": art?.paper,
@@ -58,12 +60,7 @@ function WorldPreview({ skin }: { skin: SiteSkin }) {
     >
       {/* `size-full`: menu items shrink every svg without a size-* class to icon size. */}
       <svg viewBox="0 0 200 48" className="size-full" aria-hidden>
-        <path d="M0 40 C 50 30, 70 44, 110 36 S 170 30, 200 38" stroke="var(--art-road)" strokeWidth={6} fill="none" />
-        <path d="M0 40 C 50 30, 70 44, 110 36 S 170 30, 200 38" stroke="var(--art-torch)" strokeWidth={2} fill="none" />
-        <g transform="translate(100 30) scale(0.75)">
-          <Stand />
-          <Guard />
-        </g>
+        {Scene && <Scene />}
       </svg>
     </div>
   );
@@ -71,7 +68,7 @@ function WorldPreview({ skin }: { skin: SiteSkin }) {
 
 export function SkinSwitch() {
   const t = useTranslations("skin-switch");
-  const { currentSkinId, currentSkin, skins, setSkin } = useSiteSkin();
+  const { currentSkinId, currentSkin, currentMode, skins, setSkin } = useSiteSkin();
   const groups = [
     { key: "classic", items: skins.filter((s) => s.tier === "free") },
     { key: "premium", items: skins.filter((s) => s.tier === "premium") },
@@ -127,7 +124,7 @@ export function SkinSwitch() {
                     </div>
                     <p className="mt-0.5 text-xs leading-tight text-muted-foreground">{candidate.description}</p>
                   </div>
-                  {candidate.world ? <WorldPreview skin={candidate} /> : <HuePreview skin={candidate} />}
+                  {candidate.world ? <WorldPreview skin={candidate} mode={currentMode} /> : <HuePreview skin={candidate} />}
                 </DropdownMenuItem>
               );
             })}

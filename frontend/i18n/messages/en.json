@@ -241,6 +241,43 @@
       "guards": {
         "lostDetail": "You used {used} guards; {best} are enough. The dashed outlines show where they were needed."
       }
+    },
+    "cosmos": {
+      "shortest-path": {
+        "info": "The rocket flies from {src} to {tgt}",
+        "stat": "Fuel: {cost} cells",
+        "won": "Landed with the least fuel!",
+        "lost": "You burned too much fuel",
+        "wonDetail": "{cost} cells: the cheapest route.",
+        "lostDetail": "You used {cost} cells; {best} were enough via {path}"
+      },
+      "mst": {
+        "info": "Links {count}/{needed}",
+        "stat": "Energy: {weight} cells",
+        "won": "Every colony linked at the lowest cost!",
+        "lost": "Network too expensive",
+        "wonDetail": "{weight} cells: the minimum cost.",
+        "lostDetail": "You spent {weight} cells; {best} were enough. The green links show an optimal network.",
+        "notTree": "These links do not join every colony without wasted loops (there is a loop or an isolated colony). Minimum cost: {best} cells."
+      },
+      "coloring": {
+        "info": "Neighbouring planets, different frequencies",
+        "stat": "Frequencies {used} · interference {conflicts}",
+        "won": "No interference!",
+        "lost": "Too many frequencies",
+        "wonDetail": "{used} frequencies: the minimum possible.",
+        "lostDetail": "You used {used} frequencies; {best} are enough.",
+        "conflictDetail": "{count, plural, one {# link joins} other {# links join}} planets on the same frequency. Minimum: {best} frequencies.",
+        "colorN": "Frequency {n}"
+      },
+      "guards": {
+        "info": "Every route must be watched",
+        "stat": "Drones {used} · unwatched routes {open}",
+        "won": "Sector secured!",
+        "lost": "Too many drones",
+        "wonDetail": "{used} drones: the minimum possible.",
+        "lostDetail": "You used {used} drones; {best} are enough. The dashed outlines show where they were needed."
+      }
     }
   }
 }

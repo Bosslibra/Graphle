@@ -36,6 +36,8 @@ export interface MoverArtProps {
   y: number;
   /** Faces left when it last moved leftwards. */
   facingLeft: boolean;
+  /** Direction of the last move in degrees (0 = right, 90 = down); -90 (up) before the first move. */
+  angle: number;
 }
 
 /** How a road looks for a given edge state. Values are CSS colours (use `var(--art-*)`). */
@@ -64,4 +66,6 @@ export interface GameArt {
 export interface WorldDefinition {
   id: WorldId;
   games: Partial<Record<GameId, GameArt>>;
+  /** Small scene for the skin switcher, drawn in a 200 × 48 viewBox. */
+  Preview?: ComponentType;
 }

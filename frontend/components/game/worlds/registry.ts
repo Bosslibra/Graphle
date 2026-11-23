@@ -2,11 +2,13 @@
 
 import { useSiteSkin } from "@/contexts/site-skin-context";
 import type { WorldId } from "@/lib/themes/types";
+import { cosmosWorld } from "@/components/game/worlds/cosmos";
 import { realmWorld } from "@/components/game/worlds/realm";
 import type { GameArt, GameId, WorldDefinition } from "@/components/game/worlds/types";
 
 export const WORLDS: Record<WorldId, WorldDefinition> = {
   realm: realmWorld,
+  cosmos: cosmosWorld,
 };
 
 /** World of the active skin, or undefined for abstract skins. */

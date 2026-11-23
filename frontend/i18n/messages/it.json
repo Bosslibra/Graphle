@@ -241,6 +241,43 @@
       "guards": {
         "lostDetail": "Hai usato {used} guardie; ne bastano {best}. Le sagome tratteggiate mostrano dove servivano."
       }
+    },
+    "cosmos": {
+      "shortest-path": {
+        "info": "Il razzo va da {src} a {tgt}",
+        "stat": "Carburante: {cost} celle",
+        "won": "Atterraggio con il minimo carburante!",
+        "lost": "Hai bruciato troppo carburante",
+        "wonDetail": "{cost} celle: la rotta più economica.",
+        "lostDetail": "Hai usato {cost} celle; ne bastavano {best} passando per {path}"
+      },
+      "mst": {
+        "info": "Collegamenti {count}/{needed}",
+        "stat": "Energia: {weight} celle",
+        "won": "Tutte le colonie collegate al minimo costo!",
+        "lost": "Rete troppo costosa",
+        "wonDetail": "{weight} celle: il costo minimo.",
+        "lostDetail": "Hai speso {weight} celle; ne bastavano {best}. I collegamenti verdi mostrano una rete ottima.",
+        "notTree": "Questi collegamenti non uniscono tutte le colonie senza giri inutili (c'è un anello o una colonia isolata). Costo minimo: {best} celle."
+      },
+      "coloring": {
+        "info": "Pianeti vicini, frequenze diverse",
+        "stat": "Frequenze {used} · interferenze {conflicts}",
+        "won": "Nessuna interferenza!",
+        "lost": "Troppe frequenze",
+        "wonDetail": "{used} frequenze: il minimo possibile.",
+        "lostDetail": "Hai usato {used} frequenze; ne bastano {best}.",
+        "conflictDetail": "{count, plural, one {# collegamento unisce} other {# collegamenti uniscono}} pianeti sulla stessa frequenza. Minimo: {best} frequenze.",
+        "colorN": "Frequenza {n}"
+      },
+      "guards": {
+        "info": "Ogni rotta deve essere sorvegliata",
+        "stat": "Droni {used} · rotte scoperte {open}",
+        "won": "Settore sicuro!",
+        "lost": "Troppi droni",
+        "wonDetail": "{used} droni: il minimo possibile.",
+        "lostDetail": "Hai usato {used} droni; ne bastano {best}. Le sagome tratteggiate mostrano dove servivano."
+      }
     }
   }
 }

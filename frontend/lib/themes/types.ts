@@ -1,12 +1,12 @@
 export type ColorMode = "light" | "dark";
 
-export type SiteSkinId = "default" | "paperwave" | "circuit" | "realm";
+export type SiteSkinId = "default" | "paperwave" | "circuit" | "realm" | "cosmos";
 
 /** "premium" skins are gated by `canUseSkin` (lib/skins/entitlements.ts). */
 export type SkinTier = "free" | "premium";
 
 /** Illustrated world: replaces the abstract board with per-game art (components/game/worlds). */
-export type WorldId = "realm";
+export type WorldId = "realm" | "cosmos";
 
 export interface ShadcnColorTokens {
   background: string;
