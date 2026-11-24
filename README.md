@@ -7,7 +7,7 @@ Daily graph theory minigames, Wordle style: every day each game gets a new graph
 | Shortest path | Walk from A to the target with the lowest total cost | Dijkstra |
 | Minimum spanning tree | Pick the n − 1 lightest edges that connect every node | Kruskal / Prim, cut property |
 | Graph colouring | Colour nodes so neighbours differ, with as few colours as possible | Chromatic number, NP-completeness |
-| Breadth-first search | Click nodes in the order BFS visits them | Queue vs stack, BFS vs DFS |
+| Guards | Place the fewest guards so every edge has a guarded endpoint | Minimum vertex cover, why greedy fails, König's theorem |
 
 Each game has a **Rules** dialog with how to play and a short theory note (English and Italian).
 
@@ -24,7 +24,8 @@ Everything runs in the browser, so the site is a single Next.js app with no serv
 
 - `frontend/lib/graph/random.ts`: seeded PRNG (cyrb53 + mulberry32). Daily seed = `<game>-<YYYY-MM-DD UTC>`.
 - `frontend/lib/graph/generate.ts`: random connected weighted graph (spanning tree + extra edges).
-- `frontend/lib/graph/algorithms.ts`: Dijkstra, Kruskal, BFS, chromatic number, used to check answers.
+- `frontend/lib/graph/puzzles.ts`: per-game puzzle selection (shortest path with a non-trivial route, guards where the greedy choice misses the optimum).
+- `frontend/lib/graph/algorithms.ts`: Dijkstra, Kruskal, BFS, chromatic number, minimum vertex cover, used to check answers.
 - `frontend/components/game/games/`: one component per minigame plus `registry.ts`, the list of games.
 - `frontend/lib/progress.ts`: daily results and streak in `localStorage`.
 
