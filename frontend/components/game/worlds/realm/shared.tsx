@@ -2,7 +2,8 @@
  * Reusable SVG pieces for the "Regno" world. Every piece is drawn around (0, 0) and coloured only
  * with CSS variables (`--art-*`, `--primary`, palette), so it follows the skin in light and dark mode.
  */
-import type { EdgeArtStyle, EdgeArtVisual, WeightArtProps } from "@/components/game/worlds/types";
+import { STATUS } from "@/components/game/worlds/common";
+import type { WeightArtProps } from "@/components/game/worlds/types";
 
 const INK = "var(--art-ink)";
 const PAPER = "var(--art-paper)";
@@ -10,41 +11,7 @@ const SHADE = "var(--art-shade)";
 const GOLD = "var(--art-gold)";
 const STROKE = 1.3;
 
-export const ART = { INK, PAPER, SHADE, GOLD, ROAD: "var(--art-road)", TORCH: "var(--art-torch)" };
-
-/** Wide, soft road bed under every edge. */
-export const ROAD_BED = "color-mix(in oklch, var(--art-road) 45%, transparent)";
-
-const STATUS: Partial<Record<EdgeArtVisual, string>> = {
-  correct: "var(--graph-result-win-fg)",
-  wrong: "var(--graph-result-loss-fg)",
-};
-
-/** Footpath when idle; the board's own colours (and draw animation) once chosen. */
-export function roadStyle(visual: EdgeArtVisual, built: EdgeArtStyle = {}): EdgeArtStyle {
-  if (visual === "idle" || visual === "dimmed") {
-    // Drawn straight on the board, so it uses the page text colour (readable in light and dark).
-    return { stroke: "var(--muted-foreground)", width: 1.6, dash: "1 6" };
-  }
-  const status = STATUS[visual];
-  return status ? { ...built, stroke: status, glow: status } : built;
-}
-
-/** Wooden plaque with the node id, under a building. */
-export function Plaque({ id, y }: { id: string; y: number }) {
-  return (
-    <g transform={`translate(0 ${y})`}>
-      <rect x={-9} y={-7} width={18} height={14} rx={2.5} fill={PAPER} stroke={INK} strokeWidth={1.1} />
-      <text y={4} textAnchor="middle" fontSize={10.5} fontWeight={700} fill={INK} fontFamily="var(--font-sans)">
-        {id}
-      </text>
-    </g>
-  );
-}
-
-export function GroundShadow({ y = 12, rx = 20 }: { y?: number; rx?: number }) {
-  return <ellipse cx={0} cy={y} rx={rx} ry={5} fill={SHADE} opacity={0.25} />;
-}
+export { ART, GroundShadow, Halo, Plaque, ROAD_BED, roadStyle } from "@/components/game/worlds/common";
 
 /** Small house; `lit` turns the window on. */
 export function House({ lit, x = 0, scale = 1 }: { lit: boolean; x?: number; scale?: number }) {
@@ -163,22 +130,3 @@ export function Messenger() {
   );
 }
 
-/** Ground marker under a node: dashed when it can be clicked, solid gold when it is the focus. */
-export function Halo({ clickable, focused, y = 1 }: { clickable: boolean; focused: boolean; y?: number }) {
-  if (!clickable && !focused) {
-    return null;
-  }
-  return (
-    <ellipse
-      cx={0}
-      cy={y}
-      rx={24}
-      ry={8}
-      fill={focused ? GOLD : "none"}
-      fillOpacity={focused ? 0.35 : 0}
-      stroke={focused ? GOLD : "var(--foreground)"}
-      strokeWidth={focused ? 2 : 1.5}
-      strokeDasharray={focused ? undefined : "3 3"}
-    />
-  );
-}

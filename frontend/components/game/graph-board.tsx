@@ -388,7 +388,12 @@ export default function GraphBoard({
                   } as React.CSSProperties
                 }
               >
-                <art.Mover x={at.x} y={at.y} facingLeft={dx > 0} />
+                <art.Mover
+                  x={at.x}
+                  y={at.y}
+                  facingLeft={dx > 0}
+                  angle={prev ? Math.round((Math.atan2(-dy, -dx) * 180) / Math.PI) : -90}
+                />
               </g>
             );
           })()}
